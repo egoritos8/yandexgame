@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/проект2.iml" filepath="$PROJECT_DIR$/.idea/проект2.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/pythonProjectYandex.iml" filepath="$PROJECT_DIR$/.idea/pythonProjectYandex.iml" />
+>>>>>>> ad6be6c (1)
     </modules>
   </component>
 </project>
