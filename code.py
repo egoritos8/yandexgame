@@ -30,7 +30,7 @@ game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
 
 score_font = pygame.font.Font(None, 36)
 
-# Параметры квадрата (персонажа)
+# Параметры квадрата персонажа
 square_size = 35
 square_x = 35
 square_y = HEIGHT - square_size
