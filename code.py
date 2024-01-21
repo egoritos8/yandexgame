@@ -67,7 +67,7 @@ food_sprites = pygame.sprite.Group()
 star_sprites = pygame.sprite.Group()
 portal_sprites = pygame.sprite.Group()
 
-f = open('carta', encoding='utf-8')
+f = open('level_1', encoding='utf-8')
 lines = f.readlines()
 
 
@@ -87,6 +87,9 @@ class Food(pygame.sprite.Sprite):
         score += 1
         food_sprites.remove(self)
 
+    def remove(self):
+        food_sprites.remove(self)
+
 
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -98,6 +101,9 @@ class Portal(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         portal_sprites.add(self)
+
+    def remove(self):
+        portal_sprites.remove(self)
 
 
 class Stars_effect(pygame.sprite.Sprite):
@@ -144,6 +150,9 @@ class Platform(pygame.sprite.Sprite):
         self.image = pygame.image.load(img_path)
         self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect(topleft=(x, y))
+
+    def remove(self):
+        platform_sprites.remove(self)
 
 
 class Camera:
@@ -245,7 +254,7 @@ pig_rect = Player()
 # Создание группы спрайтов для платформ
 platform_sprites = pygame.sprite.Group()
 
-# Добавление платформ в группу спрайтов
+# Добавление объектов в группу спрайтов
 for line in lines:
     if line.split('-')[0] == 'P':
         obstacle_x = int(line.split('-')[1])
@@ -276,6 +285,13 @@ game_over = False
 game_start = True
 contact = False
 
+level = {
+    1: 'level_1',
+    2: 'level_2'
+}
+
+curent_level = 1
+
 # Основной игровой цикл
 running = True
 clock = pygame.time.Clock()
@@ -304,6 +320,50 @@ while running:
                     falling_speed = 0
                     is_jumping = False
                     jump_count = 10
+                    score = 0
+                    for line in lines:
+                        if line.split('-')[0] == 'F':
+                            obstacle_x = int(line.split('-')[1])
+                            obstacle_y = int(line.split('-')[2])
+                            food = Food(obstacle_x, obstacle_y)
+                            food_sprites.add(food)
+
+                if event.type == pygame.K_RIGHT:
+                    pass # ОТРИСОВКА НОВОГО УРОВНЯ, ФЕДЯ НЕ ТРОГАЙ, Я ДОДЕЛАЮ
+                    game_over = False
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+
+                    curent_level += 1
+
+                    f = open('level_2', encoding='utf-8')
+                    lines = f.readlines()
+
+                    for line in lines:
+                        if line.split('-')[0] == 'P':
+                            obstacle_x = int(line.split('-')[1])
+                            obstacle_y = int(line.split('-')[2])
+                            obstacle_width = int(line.split('-')[3])
+                            obstacle_height = 25
+                            ship_img = 'platforma.png'
+                            platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
+                            platform_sprites.add(platform)
+                        if line.split('-')[0] == 'F':
+                            obstacle_x = int(line.split('-')[1])
+                            obstacle_y = int(line.split('-')[2])
+                            food = Food(obstacle_x, obstacle_y)
+                            food_sprites.add(food)
+                        if line.split('-')[0] == 'PORT':
+                            obstacle_x = int(line.split('-')[1])
+                            obstacle_y = int(line.split('-')[2])
+                            portal = Portal(obstacle_x, obstacle_y)
+                            portal_sprites.add(portal)
 
     if not game_start and not game_over:
         # Управление персонажем
@@ -366,7 +426,7 @@ while running:
             # Отображение персонажа
             pygame.draw.rect(win, (255, 0, 0), (square_x - camera_x, square_y, square_size, square_size))
 
-    win.fill((0, 0, 0))  # Clear the screen
+    win.fill((0, 0, 0))  # Отчистка экрана
     win.blit(background_img, (0, 0))
     platform_sprites.draw(win)
     food_sprites.draw(win)
