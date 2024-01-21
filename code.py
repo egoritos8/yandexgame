@@ -15,7 +15,7 @@ pygame.display.set_caption("BEKOSHA RUN")
 
 def load_image(name, colorkey=None):
     fullname = os.path.join(name)
-    # если файл не существует, то выходим
+    # Если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -101,7 +101,7 @@ class Portal(pygame.sprite.Sprite):
 
 
 class Particle(pygame.sprite.Sprite):
-    # сгенерируем частицы разного размера
+    # Генерируем частицы разного размера
     fire = [load_image("star.png")]
     for scale in (5, 10):
         fire.append(pygame.transform.scale(fire[0], (20, 20)))
@@ -112,28 +112,26 @@ class Particle(pygame.sprite.Sprite):
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
 
-        # у каждой частицы своя скорость — это вектор
+        # У каждой частицы своя скорость — это вектор
         self.velocity = [dx, dy]
-        # и свои координаты
+        # И свои координаты
         self.rect.x, self.rect.y = pos
 
-        # гравитация будет одинаковой (значение константы)
+        # Гравитация будет одинаковой (значение константы)
         self.gravity = 1
 
     def update(self):
-        # применяем гравитационный эффект:
-        # движение с ускорением под действием гравитации
+        # Движение с ускорением под действием гравитации
         self.velocity[1] += self.gravity
-        # перемещаем частицу
+        # Перемещаем частицу
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
-        # убиваем, если частица ушла за экран
 
 
 def create_particles(position):
-    # количество создаваемых частиц
+    # Количество создаваемых частиц
     particle_count = 20
-    # возможные скорости
+    # Возможные скорости
     numbers = range(-5, 6)
     for _ in range(particle_count):
         star = Particle(position, random.choice(numbers), random.choice(numbers))
@@ -304,7 +302,7 @@ while running:
                     jump_count = 10
 
     if not game_start and not game_over:
-        # Handle player movement
+        # Управление персонажем
         keys = pygame.key.get_pressed()
         move_left = keys[pygame.K_LEFT]
         move_right = keys[pygame.K_RIGHT]
@@ -379,11 +377,10 @@ while running:
     for star in star_sprites:
         star.update()  # Обновляем позицию звезды
         win.blit(star.image, camera.apply(star))
-    # Draw the player sprite
 
-    pygame.display.update()  # Update the display
+    pygame.display.update()  # Обновляем дисплей
     clock.tick(30)
 
-# Displaying the screen
+# Отрисовываем экран
 pygame.quit()
 sys.exit()
