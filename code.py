@@ -100,7 +100,7 @@ class Portal(pygame.sprite.Sprite):
         portal_sprites.add(self)
 
 
-class Particle(pygame.sprite.Sprite):
+class Stars_effect(pygame.sprite.Sprite):
     # Генерируем частицы разного размера
     fire = [load_image("star.png")]
     for scale in (5, 10):
@@ -128,13 +128,13 @@ class Particle(pygame.sprite.Sprite):
         self.rect.y += self.velocity[1]
 
 
-def create_particles(position):
+def create_stars(position):
     # Количество создаваемых частиц
     particle_count = 20
     # Возможные скорости
     numbers = range(-5, 6)
     for _ in range(particle_count):
-        star = Particle(position, random.choice(numbers), random.choice(numbers))
+        star = Stars_effect(position, random.choice(numbers), random.choice(numbers))
         star_sprites.add(star)
 
 
@@ -297,6 +297,7 @@ while running:
                     pig_rect.rect.x = square_x
                     pig_rect.rect.y = square_y
                     square_y = HEIGHT - square_size
+                    square_x = 35
                     falling_speed = 0
                     is_jumping = False
                     jump_count = 10
@@ -318,18 +319,19 @@ while running:
         # Обработка столкновения с платформами
         collide = pygame.sprite.spritecollide(pig_rect, platform_sprites, False)
         eating = pygame.sprite.spritecollide(pig_rect, food_sprites, False)
-        s = pygame.sprite.spritecollide(pig_rect, portal_sprites, False)
+        stars = pygame.sprite.spritecollide(pig_rect, portal_sprites, False)
 
-        if s:
-            create_particles((0, 0))
-            create_particles((300, 0))
-            create_particles((500, 0))
-            create_particles((700, 0))
-            create_particles((900, 0))
+        if stars:
+            create_stars((0, 0))
+            create_stars((300, 0))
+            create_stars((500, 0))
+            create_stars((700, 0))
+            create_stars((900, 0))
+            game_over = True
 
         if eating:
             eating[0].eat()
-            create_particles((eating[0].x, eating[0].y))
+            create_stars((eating[0].x, eating[0].y))
 
         if collide:
             if pig_rect.rect.bottom <= collide[0].rect.centery:
