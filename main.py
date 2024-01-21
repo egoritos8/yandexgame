@@ -1,14 +1,26 @@
 import pygame
 import sys
 import os
+import random
 
 # Инициализация Pygame
 pygame.init()
 
 # Создание экрана
 WIDTH, HEIGHT = 900, 600
+score = 0
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BEKOSHA RUN")
+
+
+def load_image(name, colorkey=None):
+    fullname = os.path.join(name)
+    # если файл не существует, то выходим
+    if not os.path.isfile(fullname):
+        print(f"Файл с изображением '{fullname}' не найден")
+        sys.exit()
+    image = pygame.image.load(fullname)
+    return image
 
 # Создание фоновой картинки
 background_img = pygame.image.load('background 2.png')
@@ -29,9 +41,12 @@ game_over_text = game_over_font.render("GAME OVER!", True, (0, 0, 0))
 game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
 
 score_font = pygame.font.Font(None, 36)
+score_text = game_over_font.render(str(score), True, (0, 0, 0))
+score_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
 
 # Параметры квадрата персонажа
-square_size = 35
+
+square_size = 50
 square_x = 35
 square_y = HEIGHT - square_size
 speed = 10
@@ -47,6 +62,8 @@ reverse = 'R'
 pig_mack = pygame.mask.from_surface(pig_img)
 
 platform_sprites = pygame.sprite.Group()
+food_sprites = pygame.sprite.Group()
+star_sprites = pygame.sprite.Group()
 
 f = open('carta', encoding='utf-8')
 lines = f.readlines()
@@ -58,6 +75,83 @@ class Platform(pygame.sprite.Sprite):
         self.image = pygame.image.load(img_path)
         self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect(topleft=(x, y))
+
+
+class Camera:
+    # зададим начальный сдвиг камеры
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    # сдвинуть объект obj на смещение камеры
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    # позиционировать камеру на объекте target
+    def update(self, target):
+        self.dx = -(pig_rect.rect.x + pig_rect.rect.w // 2 - WIDTH // 2)
+        self.dy = -(pig_rect.rect.y + pig_rect.rect.h // 2 - HEIGHT // 2)
+
+
+class Food(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.image.load('tort.png')
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.food_mack = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.x = x
+        self.y = y
+        food_sprites.add(self)
+
+    def eat(self):
+        global score
+        score += 1
+        food_sprites.remove(self)
+
+
+class Particle(pygame.sprite.Sprite):
+    # сгенерируем частицы разного размера
+    fire = [load_image("a.png")]
+    for scale in (5, 10):
+        fire.append(pygame.transform.scale(fire[0], (20, 20)))
+    fire = fire[1:]
+
+    def __init__(self, pos, dx, dy):
+        super().__init__()
+        self.image = random.choice(self.fire)
+        self.rect = self.image.get_rect()
+
+        # у каждой частицы своя скорость — это вектор
+        self.velocity = [dx, dy]
+        # и свои координаты
+        self.rect.x, self.rect.y = pos
+
+        # гравитация будет одинаковой (значение константы)
+        self.gravity = 1
+
+    def update(self):
+        # применяем гравитационный эффект:
+        # движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        # убиваем, если частица ушла за экран
+
+
+def create_particles(position):
+    # количество создаваемых частиц
+    particle_count = 20
+    # возможные скорости
+    numbers = range(-5, 6)
+    for _ in range(particle_count):
+        star = Particle(position, random.choice(numbers), random.choice(numbers))
+        star_sprites.add(star)
+
+
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -129,10 +223,12 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
+
 # Позиция камеры
 camera_x = 0
 
 pig_rect = Player()
+camera = Camera()
 
 # Создание группы спрайтов для платформ
 platform_sprites = pygame.sprite.Group()
@@ -147,6 +243,11 @@ for line in lines:
         ship_img = 'platforma.png'
         platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
         platform_sprites.add(platform)
+    if line.split('-')[0] == 'F':
+        obstacle_x = int(line.split('-')[1])
+        obstacle_y = int(line.split('-')[2])
+        food = Food(obstacle_x, obstacle_y)
+        food_sprites.add(food)
 
 # Управление персонажем
 move_left = False
@@ -199,6 +300,11 @@ while running:
 
         # Обработка столкновения с платформами
         collide = pygame.sprite.spritecollide(pig_rect, platform_sprites, False)
+        eating = pygame.sprite.spritecollide(pig_rect, food_sprites, False)
+        if eating:
+            eating[0].eat()
+            create_particles((eating[0].x, eating[0].y))
+
         if collide:
             if pig_rect.rect.bottom <= collide[0].rect.centery:
                 # Персонаж прыгает на платформу
@@ -230,9 +336,14 @@ while running:
         pygame.draw.rect(win, (255, 0, 0), (square_x - camera_x, square_y, square_size, square_size))
 
     win.fill((0, 0, 0))  # Clear the screen
-    win.blit(background_img, (0, 0))  # Draw the background
+    win.blit(background_img, (0, 0))
     platform_sprites.draw(win)
-    win.blit(pig_img, (pig_rect.rect.x, pig_rect.rect.y))  # Draw the player sprite
+    food_sprites.draw(win)
+    win.blit(pig_img, (pig_rect.rect.x, pig_rect.rect.y))
+    for star in star_sprites:
+        star.update()  # Обновляем позицию звезды
+        win.blit(star.image, (star.rect.x, star.rect.y))
+    # Draw the player sprite
 
     pygame.display.update()  # Update the display
     clock.tick(30)
