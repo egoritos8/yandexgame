@@ -40,7 +40,7 @@ is_jumping = False
 falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
-a = 0
+a = 1
 
 pig_img = pygame.image.load('pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
