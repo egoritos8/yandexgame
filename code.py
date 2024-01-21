@@ -134,8 +134,8 @@ def create_stars(position):
     # Возможные скорости
     numbers = range(-5, 6)
     for _ in range(particle_count):
-        star = Stars_effect(position, random.choice(numbers), random.choice(numbers))
-        star_sprites.add(star)
+        star_effects = Stars_effect(position, random.choice(numbers), random.choice(numbers))
+        star_sprites.add(star_effects)
 
 
 class Platform(pygame.sprite.Sprite):
@@ -291,6 +291,9 @@ while running:
                     game_start = False
 
         if game_over:
+            font = pygame.font.Font(None, 36)
+            end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
+            win.blit(end_text, (400, 450))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     game_over = False
@@ -376,6 +379,7 @@ while running:
     win.blit(text, (WIDTH - text.get_width() - 10, 10))
     portal_sprites.draw(win)
     win.blit(pig_img, (pig_rect.rect.x, pig_rect.rect.y))
+
     for star in star_sprites:
         star.update()  # Обновляем позицию звезды
         win.blit(star.image, camera.apply(star))
