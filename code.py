@@ -7,7 +7,7 @@ import random
 pygame.init()
 
 # Создание экрана
-WIDTH, HEIGHT = 900, 600
+WIDTH, HEIGHT = 900, 900
 score = 0
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BEKOSHA RUN")
@@ -22,8 +22,9 @@ def load_image(name, colorkey=None):
     image = pygame.image.load(fullname)
     return image
 
+
 # Создание фоновой картинки
-background_img = pygame.image.load('background 2.png')
+background_img = pygame.image.load('background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 # Создание экрана приветствия
@@ -70,43 +71,10 @@ f = open('carta', encoding='utf-8')
 lines = f.readlines()
 
 
-class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y, width, height, img_path):
-        super().__init__()
-        self.image = pygame.image.load(img_path)
-        self.image = pygame.transform.scale(self.image, (width, height))
-        self.rect = self.image.get_rect(topleft=(x, y))
-
-
-class Camera:
-    def __init__(self, width, height):
-        self.camera = pygame.Rect(0, 0, width, height)
-        self.width = width
-        self.height = height
-
-    def apply(self, entity):
-        return entity.rect.move(self.camera.topleft)
-
-    def update(self, target):
-        x = -target.rect.x + int(WIDTH / 2)
-        y = -target.rect.y + int(HEIGHT / 2)
-
-        x = min(0, x)
-        y = min(0, y)
-        x = max(-(self.width - WIDTH), x)
-        y = max(-(self.height - HEIGHT), y)
-
-        self.camera = pygame.Rect(x, y, self.width, self.height)
-
-# Затем в вашем основном цикле вы можете использовать это следующим образом:
-
-camera = Camera(WIDTH // 2, HEIGHT // 2)
-
-
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('tort.png')
+        self.image = pygame.image.load('carrot.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -125,6 +93,7 @@ class Portal(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load('portal.png')
         self.image = pygame.transform.scale(self.image, (70, 100))
+        self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
         self.x = x
         self.y = y
@@ -133,7 +102,7 @@ class Portal(pygame.sprite.Sprite):
 
 class Particle(pygame.sprite.Sprite):
     # сгенерируем частицы разного размера
-    fire = [load_image("a.png")]
+    fire = [load_image("star.png")]
     for scale in (5, 10):
         fire.append(pygame.transform.scale(fire[0], (20, 20)))
     fire = fire[1:]
@@ -171,14 +140,43 @@ def create_particles(position):
         star_sprites.add(star)
 
 
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, img_path):
+        super().__init__()
+        self.image = pygame.image.load(img_path)
+        self.image = pygame.transform.scale(self.image, (width, height))
+        self.rect = self.image.get_rect(topleft=(x, y))
 
-portal = Portal(200, 400)
+
+class Camera:
+    def __init__(self, width, height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+
+    def apply(self, entity):
+        return entity.rect.move(self.camera.topleft)
+
+    def update(self, target):
+        x = -target.rect.x + int(WIDTH / 2)
+        y = -target.rect.y + int(HEIGHT / 2)
+
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.width - WIDTH), x)
+        y = max(-(self.height - HEIGHT), y)
+
+        self.camera = pygame.Rect(x, y, self.width, self.height)
+
+
+camera = Camera(WIDTH // 2, HEIGHT // 2)
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.pig_img = pygame.image.load('pig2.png')
-        self.pig_img = pygame.transform.scale(self.pig_img, (square_size, square_size * 0.8))
+        self.pig_img = pygame.transform.scale(self.pig_img, (square_size, square_size))
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
     def update(self, move_left, move_right, jump):
@@ -244,11 +242,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
 
-# Позиция камеры
-camera_x = 0
-
 pig_rect = Player()
-
 
 # Создание группы спрайтов для платформ
 platform_sprites = pygame.sprite.Group()
@@ -268,6 +262,11 @@ for line in lines:
         obstacle_y = int(line.split('-')[2])
         food = Food(obstacle_x, obstacle_y)
         food_sprites.add(food)
+    if line.split('-')[0] == 'PORT':
+        obstacle_x = int(line.split('-')[1])
+        obstacle_y = int(line.split('-')[2])
+        portal = Portal(obstacle_x, obstacle_y)
+        portal_sprites.add(portal)
 
 # Управление персонажем
 move_left = False
@@ -354,15 +353,15 @@ while running:
         if pig_rect.rect.y > HEIGHT:
             game_over = True
 
-        # Обработка движения камеры за персонажем
-        if square_x > WIDTH / 2:
-            camera_x = square_x - WIDTH / 2
+            # Обработка движения камеры за персонажем
+            if square_x > WIDTH / 2:
+                camera_x = square_x - WIDTH / 2
 
-        # Отображение фона
-        win.blit(background_img, (0 - camera_x, 0))
+            # Отображение фона
+            win.blit(background_img, (0 - camera_x, 0))
 
-        # Отображение персонажа
-        pygame.draw.rect(win, (255, 0, 0), (square_x - camera_x, square_y, square_size, square_size))
+            # Отображение персонажа
+            pygame.draw.rect(win, (255, 0, 0), (square_x - camera_x, square_y, square_size, square_size))
 
     win.fill((0, 0, 0))  # Clear the screen
     win.blit(background_img, (0, 0))
