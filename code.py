@@ -14,7 +14,7 @@ score = 0
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BEKOSHA RUN")
 
-vol = 0.5
+vol = 0.3
 
 pygame.mixer.music.load('sounds/main_soundtrek.mp3')
 pygame.mixer.music.set_volume(vol)
@@ -361,9 +361,9 @@ while running:
                 game_over = False
                 pygame.mixer.music.play(-1)
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and curent_level != 1:
                 print(f'level - {curent_level}')
-                curent_level += 1
+                curent_level -= 1
                 falling_speed = 0
                 is_jumping = False
                 jump_count = 10
