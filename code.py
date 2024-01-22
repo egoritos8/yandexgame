@@ -67,9 +67,6 @@ food_sprites = pygame.sprite.Group()
 star_sprites = pygame.sprite.Group()
 portal_sprites = pygame.sprite.Group()
 
-f = open('level_1', encoding='utf-8')
-lines = f.readlines()
-
 
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -254,26 +251,32 @@ pig_rect = Player()
 # Создание группы спрайтов для платформ
 platform_sprites = pygame.sprite.Group()
 
-# Добавление объектов в группу спрайтов
-for line in lines:
-    if line.split('-')[0] == 'P':
-        obstacle_x = int(line.split('-')[1])
-        obstacle_y = int(line.split('-')[2])
-        obstacle_width = int(line.split('-')[3])
-        obstacle_height = 25
-        ship_img = 'platforma.png'
-        platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
-        platform_sprites.add(platform)
-    if line.split('-')[0] == 'F':
-        obstacle_x = int(line.split('-')[1])
-        obstacle_y = int(line.split('-')[2])
-        food = Food(obstacle_x, obstacle_y)
-        food_sprites.add(food)
-    if line.split('-')[0] == 'PORT':
-        obstacle_x = int(line.split('-')[1])
-        obstacle_y = int(line.split('-')[2])
-        portal = Portal(obstacle_x, obstacle_y)
-        portal_sprites.add(portal)
+
+def new_level(x):
+    f = open(level[x], encoding='utf-8')
+    lines = f.readlines()
+
+    # Добавление объектов в группу спрайтов
+    for line in lines:
+        if line.split('-')[0] == 'P':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            obstacle_width = int(line.split('-')[3])
+            obstacle_height = 25
+            ship_img = 'platforma.png'
+            platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
+            platform_sprites.add(platform)
+        if line.split('-')[0] == 'F':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y)
+            food_sprites.add(food)
+        if line.split('-')[0] == 'PORT':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            portal = Portal(obstacle_x, obstacle_y)
+            portal_sprites.add(portal)
+
 
 # Управление персонажем
 move_left = False
@@ -292,9 +295,13 @@ level = {
 
 curent_level = 1
 
+new_level(curent_level)
+
 # Основной игровой цикл
 running = True
 clock = pygame.time.Clock()
+
+print(f'level - {curent_level}')
 
 while running:
     for event in pygame.event.get():
@@ -312,6 +319,7 @@ while running:
             win.blit(end_text, (400, 450))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    print(f'level - {curent_level}')
                     game_over = False
                     pig_rect.rect.x = square_x
                     pig_rect.rect.y = square_y
@@ -321,49 +329,22 @@ while running:
                     is_jumping = False
                     jump_count = 10
                     score = 0
-                    for line in lines:
-                        if line.split('-')[0] == 'F':
-                            obstacle_x = int(line.split('-')[1])
-                            obstacle_y = int(line.split('-')[2])
-                            food = Food(obstacle_x, obstacle_y)
-                            food_sprites.add(food)
+                    new_level(curent_level)
 
                 if event.type == pygame.K_RIGHT:
-                    pass # ОТРИСОВКА НОВОГО УРОВНЯ, ФЕДЯ НЕ ТРОГАЙ, Я ДОДЕЛАЮ
-                    game_over = False
-                    pig_rect.rect.x = square_x
-                    pig_rect.rect.y = square_y
-                    square_y = HEIGHT - square_size
-                    square_x = 35
+                    print(f'level - {curent_level}')
+                    curent_level += 1
                     falling_speed = 0
                     is_jumping = False
                     jump_count = 10
                     score = 0
-
-                    curent_level += 1
-
-                    f = open('level_2', encoding='utf-8')
-                    lines = f.readlines()
-
-                    for line in lines:
-                        if line.split('-')[0] == 'P':
-                            obstacle_x = int(line.split('-')[1])
-                            obstacle_y = int(line.split('-')[2])
-                            obstacle_width = int(line.split('-')[3])
-                            obstacle_height = 25
-                            ship_img = 'platforma.png'
-                            platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
-                            platform_sprites.add(platform)
-                        if line.split('-')[0] == 'F':
-                            obstacle_x = int(line.split('-')[1])
-                            obstacle_y = int(line.split('-')[2])
-                            food = Food(obstacle_x, obstacle_y)
-                            food_sprites.add(food)
-                        if line.split('-')[0] == 'PORT':
-                            obstacle_x = int(line.split('-')[1])
-                            obstacle_y = int(line.split('-')[2])
-                            portal = Portal(obstacle_x, obstacle_y)
-                            portal_sprites.add(portal)
+                    win.fill((0, 0, 0))
+                    new_level(curent_level)
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    game_over = False
 
     if not game_start and not game_over:
         # Управление персонажем
