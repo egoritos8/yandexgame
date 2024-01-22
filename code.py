@@ -272,7 +272,6 @@ def new_level(x):
     f = open(level[x], encoding='utf-8')
     lines = f.readlines()
 
-    # Добавление объектов в группу спрайтов
     for line in lines:
         if line.split('-')[0] == 'P':
             obstacle_x = int(line.split('-')[1])
@@ -333,35 +332,49 @@ while running:
             font = pygame.font.Font(None, 36)
             end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
             win.blit(end_text, (400, 450))
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    print(f'level - {curent_level}')
-                    game_over = False
-                    pig_rect.rect.x = square_x
-                    pig_rect.rect.y = square_y
-                    square_y = HEIGHT - square_size
-                    square_x = 35
-                    falling_speed = 0
-                    is_jumping = False
-                    jump_count = 10
-                    score = 0
-                    new_level(curent_level)
-                    pygame.mixer.music.play(-1)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                print(f'level - {curent_level}')
+                game_over = False
+                pig_rect.rect.x = square_x
+                pig_rect.rect.y = square_y
+                square_y = HEIGHT - square_size
+                square_x = 35
+                falling_speed = 0
+                is_jumping = False
+                jump_count = 10
+                score = 0
+                new_level(curent_level)
+                pygame.mixer.music.play(-1)
 
-                if event.type == pygame.K_RIGHT:
-                    print(f'level - {curent_level}')
-                    curent_level += 1
-                    falling_speed = 0
-                    is_jumping = False
-                    jump_count = 10
-                    score = 0
-                    new_level(curent_level)
-                    pig_rect.rect.x = square_x
-                    pig_rect.rect.y = square_y
-                    square_y = HEIGHT - square_size
-                    square_x = 35
-                    game_over = False
-                    pygame.mixer.music.play(-1)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+                print(f'level - {curent_level}')
+                curent_level += 1
+                falling_speed = 0
+                is_jumping = False
+                jump_count = 10
+                score = 0
+                new_level(curent_level)
+                pig_rect.rect.x = square_x
+                pig_rect.rect.y = square_y
+                square_y = HEIGHT - square_size
+                square_x = 35
+                game_over = False
+                pygame.mixer.music.play(-1)
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+                print(f'level - {curent_level}')
+                curent_level += 1
+                falling_speed = 0
+                is_jumping = False
+                jump_count = 10
+                score = 0
+                new_level(curent_level)
+                pig_rect.rect.x = square_x
+                pig_rect.rect.y = square_y
+                square_y = HEIGHT - square_size
+                square_x = 35
+                game_over = False
+                pygame.mixer.music.play(-1)
 
     if not game_start and not game_over:
         # Управление персонажем
