@@ -346,6 +346,7 @@ while running:
                 jump_count = 10
                 score = 0
                 new_level(curent_level)
+                win_sound.stop()
                 pygame.mixer.music.play(-1)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
@@ -360,6 +361,7 @@ while running:
                 square_y = HEIGHT - square_size
                 square_x = 35
                 game_over = False
+                win_sound.stop()
                 pygame.mixer.music.play(-1)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and curent_level != 1:
@@ -374,6 +376,7 @@ while running:
                 square_y = HEIGHT - square_size
                 square_x = 35
                 game_over = False
+                win_sound.stop()
                 pygame.mixer.music.play(-1)
 
     if not game_start and not game_over:
