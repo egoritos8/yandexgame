@@ -3,6 +3,8 @@ import sys
 import os
 import random
 
+
+pygame.mixer.pre_init(44100, -16, 1, 512)
 # Инициализация Pygame
 pygame.init()
 
@@ -11,6 +13,15 @@ WIDTH, HEIGHT = 900, 900
 score = 0
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BEKOSHA RUN")
+
+vol = 0.5
+
+pygame.mixer.music.load('sounds/main_soundtrek.mp3')
+pygame.mixer.music.set_volume(vol)
+pygame.mixer.music.play(-1)
+
+carrot_sound = pygame.mixer.Sound('sounds/carrot_sound.ogg')
+win_sound = pygame.mixer.Sound("sounds/win_sound.ogg")
 
 
 def load_image(name, colorkey=None):
@@ -24,7 +35,7 @@ def load_image(name, colorkey=None):
 
 
 # Создание фоновой картинки
-background_img = pygame.image.load('background2.png')
+background_img = pygame.image.load('images/background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 # Создание экрана приветствия
@@ -57,7 +68,7 @@ falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
 
-pig_img = pygame.image.load('pig2.png')
+pig_img = pygame.image.load('images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
 reverse = 'L'
 pig_mack = pygame.mask.from_surface(pig_img)
@@ -71,7 +82,7 @@ portal_sprites = pygame.sprite.Group()
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('carrot.png')
+        self.image = pygame.image.load('images/carrot.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -82,6 +93,7 @@ class Food(pygame.sprite.Sprite):
     def eat(self):
         global score
         score += 1
+        carrot_sound.play()
         food_sprites.remove(self)
 
     def remove(self):
@@ -91,7 +103,7 @@ class Food(pygame.sprite.Sprite):
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('portal.png')
+        self.image = pygame.image.load('images/portal.png')
         self.image = pygame.transform.scale(self.image, (70, 100))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -105,7 +117,7 @@ class Portal(pygame.sprite.Sprite):
 
 class Stars_effect(pygame.sprite.Sprite):
     # Генерируем частицы разного размера
-    fire = [load_image("star.png")]
+    fire = [load_image("images/star.png")]
     for scale in (5, 10):
         fire.append(pygame.transform.scale(fire[0], (20, 20)))
     fire = fire[1:]
@@ -179,7 +191,7 @@ camera = Camera(WIDTH // 2, HEIGHT // 2)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.pig_img = pygame.image.load('pig2.png')
+        self.pig_img = pygame.image.load('images/pig2.png')
         self.pig_img = pygame.transform.scale(self.pig_img, (square_size, square_size))
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
@@ -253,6 +265,10 @@ platform_sprites = pygame.sprite.Group()
 
 
 def new_level(x):
+    platform_sprites.empty()
+    food_sprites.empty()
+    portal_sprites.empty()
+
     f = open(level[x], encoding='utf-8')
     lines = f.readlines()
 
@@ -263,7 +279,7 @@ def new_level(x):
             obstacle_y = int(line.split('-')[2])
             obstacle_width = int(line.split('-')[3])
             obstacle_height = 25
-            ship_img = 'platforma.png'
+            ship_img = 'images/platforma.png'
             platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
             platform_sprites.add(platform)
         if line.split('-')[0] == 'F':
@@ -289,8 +305,8 @@ game_start = True
 contact = False
 
 level = {
-    1: 'level_1',
-    2: 'level_2'
+    1: 'levels/level_1',
+    2: 'levels/level_2'
 }
 
 curent_level = 1
@@ -330,6 +346,7 @@ while running:
                     jump_count = 10
                     score = 0
                     new_level(curent_level)
+                    pygame.mixer.music.play(-1)
 
                 if event.type == pygame.K_RIGHT:
                     print(f'level - {curent_level}')
@@ -338,13 +355,13 @@ while running:
                     is_jumping = False
                     jump_count = 10
                     score = 0
-                    win.fill((0, 0, 0))
                     new_level(curent_level)
                     pig_rect.rect.x = square_x
                     pig_rect.rect.y = square_y
                     square_y = HEIGHT - square_size
                     square_x = 35
                     game_over = False
+                    pygame.mixer.music.play(-1)
 
     if not game_start and not game_over:
         # Управление персонажем
@@ -372,6 +389,9 @@ while running:
             create_stars((700, 0))
             create_stars((900, 0))
             game_over = True
+            pygame.mixer.music.pause()
+            win_sound.set_volume(vol)
+            win_sound.play()
 
         if eating:
             eating[0].eat()
