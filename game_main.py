@@ -305,7 +305,9 @@ contact = False
 
 level = {
     1: 'levels/level_1',
-    2: 'levels/level_2'
+    2: 'levels/level_2',
+    3: 'levels/level_3',
+    4: 'levels/level_4',
 }
 
 curent_level = 1
@@ -316,9 +318,10 @@ new_level(curent_level)
 running = True
 clock = pygame.time.Clock()
 
-print(f'level - {curent_level}')
+time = 0
 
 while running:
+    time += 1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -333,7 +336,6 @@ while running:
             end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
             win.blit(end_text, (400, 450))
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                print(f'level - {curent_level}')
                 game_over = False
                 pig_rect.rect.x = square_x
                 pig_rect.rect.y = square_y
@@ -347,7 +349,6 @@ while running:
                 pygame.mixer.music.play(-1)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
-                print(f'level - {curent_level}')
                 curent_level += 1
                 falling_speed = 0
                 is_jumping = False
@@ -362,7 +363,6 @@ while running:
                 pygame.mixer.music.play(-1)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and curent_level != 1:
-                print(f'level - {curent_level}')
                 curent_level -= 1
                 falling_speed = 0
                 is_jumping = False
