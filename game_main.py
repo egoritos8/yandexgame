@@ -70,7 +70,7 @@ prev_square_y = square_y  # Начальная позиция по вертик�
 
 pig_img = pygame.image.load('images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
-reverse = 'L'
+reverse = 'R'
 pig_mack = pygame.mask.from_surface(pig_img)
 
 platform_sprites = pygame.sprite.Group()
@@ -278,7 +278,7 @@ def new_level(x):
             obstacle_y = int(line.split('-')[2])
             obstacle_width = int(line.split('-')[3])
             obstacle_height = 25
-            ship_img = 'images/platforma.png'
+            ship_img = 'images/platform.png'
             platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
             platform_sprites.add(platform)
         if line.split('-')[0] == 'F':
