@@ -308,6 +308,7 @@ level = {
     2: 'levels/level_2',
     3: 'levels/level_3',
     4: 'levels/level_4',
+    5: 'levels/level_5',
 }
 
 curent_level = 1
@@ -349,7 +350,7 @@ while running:
                 win_sound.stop()
                 pygame.mixer.music.play(-1)
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and curent_level != 5:
                 curent_level += 1
                 falling_speed = 0
                 is_jumping = False
