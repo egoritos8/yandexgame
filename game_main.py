@@ -152,13 +152,23 @@ class Food(pygame.sprite.Sprite):
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('images/portal.png')
-        self.image = pygame.transform.scale(self.image, (70, 100))
-        self.food_mack = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect(topleft=(x, y))
+        original_image = pygame.image.load('images/portal2.png')
+        self.image = pygame.transform.scale(original_image, (100, 100))
+        self.rect = self.image.get_rect(center=(x, y))
         self.x = x
         self.y = y
-        portal_sprites.add(self)
+        self.angle = 0  # Угол вращения портала
+        self.original_image = self.image  # Сохраняем оригинальное изображение портала
+
+    def update(self):
+        # Обновляем угол вращения портала
+        self.angle = (self.angle + 5) % 360  # Увеличиваем угол на 5 градусов в каждом кадре
+
+        # Создаем повернутое изображение портала
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
+
+        # Получаем новый прямоугольник с учетом поворота
+        self.rect = self.image.get_rect(center=self.rect.center)
 
     def remove(self):
         portal_sprites.remove(self)
@@ -554,6 +564,13 @@ while running:
             jump = False
 
         pig_rect.update(move_left, move_right, jump)
+
+        win.blit(background_img, (0, 0))
+
+        # Обновление и отрисовка порталов
+        portal_sprites.update()  # Обновляем порталы
+        for portal in portal_sprites:
+            win.blit(portal.image, portal.rect)
 
         # Обработка столкновения с платформами
         collide = pygame.sprite.spritecollide(pig_rect, platform_sprites, False)
