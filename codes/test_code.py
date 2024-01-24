@@ -19,14 +19,14 @@ pygame.display.set_caption("BEKOSHA RUN")
 vol = 0.3
 
 # Загружаем музыку
-pygame.mixer.music.load('sounds/main_soundtrek.mp3')
+pygame.mixer.music.load('../sounds/main_soundtrek.mp3')
 pygame.mixer.music.set_volume(vol)
 pygame.mixer.music.play(-1)
 
-carrot_sound = pygame.mixer.Sound('sounds/carrot_sound.ogg')
-win_sound = pygame.mixer.Sound("sounds/win_sound.ogg")
+carrot_sound = pygame.mixer.Sound('../sounds/carrot_sound.ogg')
+win_sound = pygame.mixer.Sound("../sounds/win_sound.ogg")
 
-background_img = pygame.image.load('images/background2.png')
+background_img = pygame.image.load('../images/background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 curent_level = 0
@@ -36,19 +36,19 @@ welcome_font = pygame.font.Font(None, 200)
 welcome_text = welcome_font.render("BEKOSHA RUN", True, (0, 0, 0))
 welcome_text_rect = welcome_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 700))
 
-start_button_image = pygame.image.load('images/start_button.png')
+start_button_image = pygame.image.load('../images/start_button.png')
 start_button_image = pygame.transform.scale(start_button_image, (140, 140))
 start_button_rect = start_button_image.get_rect(topleft=(WIDTH // 2 - 70, 300))
 
-pause_button_image = pygame.image.load('images/pause_button.png')
+pause_button_image = pygame.image.load('../images/pause_button.png')
 pause_button_image = pygame.transform.scale(pause_button_image, (70, 70))
 pause_button_rect = pause_button_image.get_rect(topleft=(10, 10))
 
-list_button_image = pygame.image.load('images/list_button.png')
+list_button_image = pygame.image.load('../images/list_button.png')
 list_button_image = pygame.transform.scale(list_button_image, (140, 140))
 list_button_rect = list_button_image.get_rect(topleft=(WIDTH // 2 + 105, 300))
 
-restart_button_image = pygame.image.load('images/return_button.png')
+restart_button_image = pygame.image.load('../images/return_button.png')
 restart_button_image = pygame.transform.scale(restart_button_image, (140, 140))
 restart_button_rect = restart_button_image.get_rect(topleft=(WIDTH // 2 - 245, 300))
 
@@ -82,7 +82,7 @@ def load_image(name, colorkey=None):
 
 
 # Создание фоновой картинки
-background_img = pygame.image.load('images/background2.png')
+background_img = pygame.image.load('../images/background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 # Создание экрана приветствия
@@ -116,7 +116,7 @@ contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
 carrot_counter = 0
 
-pig_img = pygame.image.load('images/pig2.png')
+pig_img = pygame.image.load('../images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
 reverse = 'L'
 pig_mack = pygame.mask.from_surface(pig_img)
@@ -131,19 +131,29 @@ portal_sprites = pygame.sprite.Group()
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('images/carrot.png')
-        self.image = pygame.transform.scale(self.image, (50, 50))
-        self.food_mack = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.x = x
+        self.x = x  # Добавляем атрибут x
         self.y = y
+        self.image = pygame.image.load('../images/carrot.png')
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.food_mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.original_y = y  # Сохраняем изначальную позицию по вертикали
+        self.direction = 1  # Направление движения морковки
+        self.speed = 1  # Устанавливаем скорость морковки
         food_sprites.add(self)
+
+    def update(self):
+        self.rect.y += self.speed * self.direction  # Поднимаем или опускаем морковку
+        if self.rect.y <= self.original_y - 10:  # Если морковка преодолела 10 пикселей вверх
+            self.direction = 1  # Поменять направление движения на опускание
+        elif self.rect.y >= self.original_y + 10:  # Если морковка опустилась на 10 пикселей вниз от изначальной позиции
+            self.direction = -1  # Поменять направление движения на подъем
 
     def eat(self):
         global score
         global carrot_counter
         score += 1
-        schet += 1
+        carrot_counter += 1
         carrot_sound.play()
         food_sprites.remove(self)
 
@@ -155,7 +165,7 @@ class Food(pygame.sprite.Sprite):
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        original_image = pygame.image.load('images/portal2.png')
+        original_image = pygame.image.load('../images/portal2.png')
         self.image = pygame.transform.scale(original_image, (100, 100))
         self.rect = self.image.get_rect(center=(x, y))
         self.x = x
@@ -258,7 +268,7 @@ camera = Camera(WIDTH // 2, HEIGHT // 2)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.pig_img = pygame.image.load('images/pig2.png')
+        self.pig_img = pygame.image.load('../images/pig2.png')
         self.pig_img = pygame.transform.scale(self.pig_img, (square_size, square_size))
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
@@ -391,6 +401,8 @@ clock = pygame.time.Clock()
 print(f'level - {curent_level}')
 
 while running:
+    portal_sprites.update()
+    food_sprites.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -439,6 +451,7 @@ while running:
                     curent_level = 1
                     win_sound.stop()
                     status = 'in_game'
+                    new_level(curent_level)
             a = 0
 
         if status == 'in_game':
@@ -496,6 +509,38 @@ while running:
             game_over = False
 
         if status == 'game_window':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    win_sound.stop()
+                    print(f'level - {curent_level}')
+                    game_over = False
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    carrot_counter = 0
+                    score = 0
+                    curent_level = 1
+                    new_level(curent_level)
+                    pygame.mixer.music.play(-1)
+                    status = 'in_game'
+                if list_button_rect.collidepoint(event.pos):
+                    win_sound.stop()
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+                    new_level(curent_level)
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    game_over = False
+                    pygame.mixer.music.play(-1)
+                    status = 'main_menu'
             game_over = False
             pig_rect.rect.x = square_x
             pig_rect.rect.y = square_y
@@ -635,7 +680,6 @@ while running:
         font = pygame.font.Font(None, 100)
         text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!", True, (255, 255, 255))
         win.blit(text, (40, 170))
-        font = pygame.font.Font(None, 50)
         for star in star_sprites:
             star.update()
             win.blit(star.image, camera.apply(star))

@@ -131,13 +131,23 @@ portal_sprites = pygame.sprite.Group()
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
+        self.x = x  # Добавляем атрибут x
+        self.y = y
         self.image = pygame.image.load('images/carrot.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
-        self.food_mack = pygame.mask.from_surface(self.image)
+        self.food_mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.x = x
-        self.y = y
+        self.original_y = y  # Сохраняем изначальную позицию по вертикали
+        self.direction = 1  # Направление движения морковки
+        self.speed = 1  # Устанавливаем скорость морковки
         food_sprites.add(self)
+
+    def update(self):
+        self.rect.y += self.speed * self.direction  # Поднимаем или опускаем морковку
+        if self.rect.y <= self.original_y - 10:  # Если морковка преодолела 10 пикселей вверх
+            self.direction = 1  # Поменять направление движения на опускание
+        elif self.rect.y >= self.original_y + 10:  # Если морковка опустилась на 10 пикселей вниз от изначальной позиции
+            self.direction = -1  # Поменять направление движения на подъем
 
     def eat(self):
         global score
@@ -392,6 +402,7 @@ print(f'level - {curent_level}')
 
 while running:
     portal_sprites.update()
+    food_sprites.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -687,7 +698,7 @@ while running:
         font = pygame.font.Font(None, 50)
         if carrot_counter == 1:
             text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВКУ", True, (255, 255, 255))
-        elif carrot_counter == [2, 3, 4]:
+        elif carrot_counter == 2 or carrot_counter == 3 or carrot_counter == 4:
             text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОКИ", True, (255, 255, 255))
         else:
             text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОК", True, (255, 255, 255))
