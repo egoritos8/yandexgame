@@ -15,14 +15,14 @@ pygame.display.set_caption("BEKOSHA RUN")
 
 vol = 0.3
 
-pygame.mixer.music.load('sounds/main_soundtrek.mp3')
+pygame.mixer.music.load('../sounds/main_soundtrek.mp3')
 pygame.mixer.music.set_volume(vol)
 pygame.mixer.music.play(-1)
 
-carrot_sound = pygame.mixer.Sound('sounds/carrot_sound.ogg')
-win_sound = pygame.mixer.Sound("sounds/win_sound.ogg")
+carrot_sound = pygame.mixer.Sound('../sounds/carrot_sound.ogg')
+win_sound = pygame.mixer.Sound("../sounds/win_sound.ogg")
 
-background_img = pygame.image.load('images/background2.png')
+background_img = pygame.image.load('../images/background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 curent_level = 0
@@ -31,19 +31,19 @@ welcome_font = pygame.font.Font(None, 200)
 welcome_text = welcome_font.render("BEKOSHA RUN", True, (0, 0, 0))
 welcome_text_rect = welcome_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 700))
 
-start_button_image = pygame.image.load('images/start_button.png')
+start_button_image = pygame.image.load('../images/start_button.png')
 start_button_image = pygame.transform.scale(start_button_image, (140, 140))
 start_button_rect = start_button_image.get_rect(topleft=(WIDTH // 2 - 70, 300))
 
-pause_button_image = pygame.image.load('images/pause_button.png')
+pause_button_image = pygame.image.load('../images/pause_button.png')
 pause_button_image = pygame.transform.scale(pause_button_image, (70, 70))
 pause_button_rect = pause_button_image.get_rect(topleft=(10, 10))
 
-list_button_image = pygame.image.load('images/list_button.png')
+list_button_image = pygame.image.load('../images/list_button.png')
 list_button_image = pygame.transform.scale(list_button_image, (140, 140))
 list_button_rect = list_button_image.get_rect(topleft=(WIDTH // 2 + 105, 300))
 
-restart_button_image = pygame.image.load('images/return_button.png')
+restart_button_image = pygame.image.load('../images/return_button.png')
 restart_button_image = pygame.transform.scale(restart_button_image, (140, 140))
 restart_button_rect = restart_button_image.get_rect(topleft=(WIDTH // 2 - 245, 300))
 
@@ -76,7 +76,7 @@ def load_image(name, colorkey=None):
 
 
 # Создание фоновой картинки
-background_img = pygame.image.load('images/background2.png')
+background_img = pygame.image.load('../images/background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 # Создание экрана приветствия
@@ -109,7 +109,7 @@ falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
 
-pig_img = pygame.image.load('images/pig2.png')
+pig_img = pygame.image.load('../images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
 reverse = 'L'
 pig_mack = pygame.mask.from_surface(pig_img)
@@ -123,7 +123,7 @@ portal_sprites = pygame.sprite.Group()
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('images/carrot.png')
+        self.image = pygame.image.load('../images/carrot.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -144,7 +144,7 @@ class Food(pygame.sprite.Sprite):
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('images/portal.png')
+        self.image = pygame.image.load('../images/portal.png')
         self.image = pygame.transform.scale(self.image, (70, 100))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -270,7 +270,7 @@ camera = Camera(WIDTH // 2, HEIGHT // 2)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.pig_img = pygame.image.load('images/pig2.png')
+        self.pig_img = pygame.image.load('../images/pig2.png')
         self.pig_img = pygame.transform.scale(self.pig_img, (square_size, square_size))
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
