@@ -114,6 +114,7 @@ is_jumping = False
 falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
+schet = 0
 
 pig_img = pygame.image.load('images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
@@ -140,7 +141,9 @@ class Food(pygame.sprite.Sprite):
 
     def eat(self):
         global score
+        global schet
         score += 1
+        schet += 1
         carrot_sound.play()
         food_sprites.remove(self)
 
@@ -632,6 +635,12 @@ while running:
         font = pygame.font.Font(None, 100)
         text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!", True, (255, 255, 255))
         win.blit(text, (40, 170))
+        font = pygame.font.Font(None, 50)
+        if schet in [2, 3, 4, 0]:
+            text = font.render(f"ВЫ СОБРАЛИ {schet} МОРКОВОК", True, (255, 255, 255))
+        else:
+            text = font.render(f"ВЫ СОБРАЛИ {schet} МОРКОВКУ", True, (255, 255, 255))
+        win.blit(text, (40, 600))
         for star in star_sprites:
             star.update()
             win.blit(star.image, camera.apply(star))
@@ -647,6 +656,12 @@ while running:
         font = pygame.font.Font(None, 100)
         text = font.render("ВЫ ПРОШЛИ ИГРУ!", True, (255, 255, 255))
         win.blit(text, (100, 170))
+        font = pygame.font.Font(None, 50)
+        if schet in [2, 3, 4, 0]:
+            text = font.render(f"ВЫ СОБРАЛИ {schet} МОРКОВОК", True, (255, 255, 255))
+        else:
+            text = font.render(f"ВЫ СОБРАЛИ {schet} МОРКОВКУ", True, (255, 255, 255))
+        win.blit(text, (40, 600))
     if status == 'in_game':
         # Отчистка экрана
         win.blit(pause_button_image, pause_button_rect)
