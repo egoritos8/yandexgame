@@ -3,25 +3,69 @@ import sys
 import os
 import random
 
-
 pygame.mixer.pre_init(44100, -16, 1, 512)
 # Инициализация Pygame
 pygame.init()
 
 # Создание экрана
-WIDTH, HEIGHT = 900, 900
+WIDTH, HEIGHT = 900, 700
 score = 0
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BEKOSHA RUN")
 
 vol = 0.3
 
-pygame.mixer.music.load('sounds/main_soundtrek.mp3')
+pygame.mixer.music.load('main_soundtrek.mp3')
 pygame.mixer.music.set_volume(vol)
 pygame.mixer.music.play(-1)
 
-carrot_sound = pygame.mixer.Sound('sounds/carrot_sound.ogg')
-win_sound = pygame.mixer.Sound("sounds/win_sound.ogg")
+carrot_sound = pygame.mixer.Sound('carrot_sound.ogg')
+win_sound = pygame.mixer.Sound("win_sound.ogg")
+
+background_img = pygame.image.load('background2.png')
+background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
+
+f = open('game', encoding='utf-8')
+lines = f.readlines()
+curent_level = lines[0]
+
+welcome_font = pygame.font.Font(None, 200)
+welcome_text = welcome_font.render("BEKOSHA RUN", True, (0, 0, 0))
+welcome_text_rect = welcome_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 700))
+
+start_button_image = pygame.image.load('start_button.png')
+start_button_image = pygame.transform.scale(start_button_image, (140, 140))
+start_button_rect = start_button_image.get_rect(topleft=(WIDTH // 2 - 70, 300))
+
+pause_button_image = pygame.image.load('pause_button.png')
+pause_button_image = pygame.transform.scale(pause_button_image, (70, 70))
+pause_button_rect = pause_button_image.get_rect(topleft=(10, 10))
+
+list_button_image = pygame.image.load('list_button.png')
+list_button_image = pygame.transform.scale(list_button_image, (140, 140))
+list_button_rect = list_button_image.get_rect(topleft=(WIDTH // 2 + 105, 300))
+
+restart_button_image = pygame.image.load('return_button.png')
+restart_button_image = pygame.transform.scale(restart_button_image, (140, 140))
+restart_button_rect = restart_button_image.get_rect(topleft=(WIDTH // 2 - 245, 300))
+
+level_buttons = ['back_button.png', 'button_1.png', 'button_2.png', 'button_3.png',
+                 'button_4.png', 'button_5.png']
+
+button_group = []
+
+for i in range(3):
+    a = pygame.image.load(level_buttons[i])
+    print(level_buttons[i])
+    a = pygame.transform.scale(a, (120, 120))
+    b = a.get_rect(topleft=(200 + 200 * i, 250))
+    button_group.append((a, b))
+
+for i in range(3):
+    a = pygame.image.load(level_buttons[i + 3])
+    a = pygame.transform.scale(a, (120, 120))
+    b = a.get_rect(topleft=(200 + 200 * i, 400))
+    button_group.append((a, b))
 
 
 def load_image(name, colorkey=None):
@@ -35,13 +79,13 @@ def load_image(name, colorkey=None):
 
 
 # Создание фоновой картинки
-background_img = pygame.image.load('images/background2.png')
+background_img = pygame.image.load('background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 # Создание экрана приветствия
-welcome_font = pygame.font.Font(None, 50)
-welcome_text = welcome_font.render("BEKOSHA RUN", True, (0, 0, 0))
-welcome_text_rect = welcome_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+welcome_font = pygame.font.Font(None, 140)
+welcome_text = welcome_font.render("BEKOSHA RUN", True, (200, 200, 200))
+welcome_text_rect = welcome_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 200))
 
 instructions_font = pygame.font.Font(None, 36)
 instructions_text = instructions_font.render("Press SPACE or UP to jump", True, (0, 0, 0))
@@ -68,9 +112,9 @@ falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
 
-pig_img = pygame.image.load('images/pig2.png')
+pig_img = pygame.image.load('pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
-reverse = 'R'
+reverse = 'L'
 pig_mack = pygame.mask.from_surface(pig_img)
 
 platform_sprites = pygame.sprite.Group()
@@ -82,7 +126,7 @@ portal_sprites = pygame.sprite.Group()
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('images/carrot.png')
+        self.image = pygame.image.load('carrot.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -103,7 +147,7 @@ class Food(pygame.sprite.Sprite):
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('images/portal.png')
+        self.image = pygame.image.load('portal.png')
         self.image = pygame.transform.scale(self.image, (70, 100))
         self.food_mack = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -114,10 +158,47 @@ class Portal(pygame.sprite.Sprite):
     def remove(self):
         portal_sprites.remove(self)
 
+class Win_effect(pygame.sprite.Sprite):
+    # Генерируем частицы разного размера
+    fire = [load_image("kubok.png")]
+    for scale in (5, 10):
+        fire.append(pygame.transform.scale(fire[0], (50, 50)))
+    fire = fire[1:]
+
+    def __init__(self, pos, dx, dy):
+        super().__init__()
+        self.image = random.choice(self.fire)
+        self.rect = self.image.get_rect()
+
+        # У каждой частицы своя скорость — это вектор
+        self.velocity = [dx, dy]
+        # И свои координаты
+        self.rect.x, self.rect.y = pos
+
+        # Гравитация будет одинаковой (значение константы)
+        self.gravity = 1
+
+    def update(self):
+        # Движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # Перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+
+
+def selebrate(position):
+    # Количество создаваемых частиц
+    particle_count = 20
+    # Возможные скорости
+    numbers = range(-5, 6)
+    for _ in range(particle_count):
+        star_effects = Win_effect(position, random.choice(numbers), random.choice(numbers))
+        star_sprites.add(star_effects)
+
 
 class Stars_effect(pygame.sprite.Sprite):
     # Генерируем частицы разного размера
-    fire = [load_image("images/star.png")]
+    fire = [load_image("star.png")]
     for scale in (5, 10):
         fire.append(pygame.transform.scale(fire[0], (20, 20)))
     fire = fire[1:]
@@ -191,7 +272,7 @@ camera = Camera(WIDTH // 2, HEIGHT // 2)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.pig_img = pygame.image.load('images/pig2.png')
+        self.pig_img = pygame.image.load('pig2.png')
         self.pig_img = pygame.transform.scale(self.pig_img, (square_size, square_size))
         self.rect = pygame.Rect(square_x, square_y, square_size, square_size)
 
@@ -278,7 +359,7 @@ def new_level(x):
             obstacle_y = int(line.split('-')[2])
             obstacle_width = int(line.split('-')[3])
             obstacle_height = 25
-            ship_img = 'images/platform.png'
+            ship_img = 'platforma.png'
             platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
             platform_sprites.add(platform)
         if line.split('-')[0] == 'F':
@@ -304,68 +385,155 @@ game_start = True
 contact = False
 
 level = {
-    1: 'levels/level_1',
-    2: 'levels/level_2',
-    3: 'levels/level_3',
-    4: 'levels/level_4',
-    5: 'levels/level_5',
+    1: 'level_1',
+    2: 'level_2',
+    3: 'level_3',
+    4: 'level_4',
+    5: 'level_5'
 }
 
 curent_level = 1
 
-new_level(curent_level)
+a = 0
 
 # Основной игровой цикл
 running = True
+status = 'главное меню'
 clock = pygame.time.Clock()
 
-time = 0
+print(f'level - {curent_level}')
 
 while running:
-    time += 1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        if game_start:
+        if status == 'выбор уровней':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_group[0][1].collidepoint(event.pos):
+                    status = 'главное меню'
+                    a = 1
+                for i in range(1, 6):
+                    if button_group[i][1].collidepoint(event.pos):
+                        print(1)
+                        curent_level = i
+                        new_level(curent_level)
+                        print(f'level - {curent_level}')
+                        game_over = False
+                        pig_rect.rect.x = square_x
+                        pig_rect.rect.y = square_y
+                        square_y = HEIGHT - square_size
+                        square_x = 35
+                        falling_speed = 0
+                        is_jumping = False
+                        jump_count = 10
+                        pygame.mixer.music.play(-1)
+                        status = 'в игре'
+            font = pygame.font.Font(None, 36)
+            end_text = font.render("ВЫБЕРИТЕ УРОВЕНЬ", True, (255, 255, 255))
+            win.blit(end_text, (400, 450))
+
+        if status == 'главное меню':
+            win.blit(welcome_text, welcome_text_rect)
+            win.blit(start_button_image, start_button_rect)
+            win.blit(list_button_image, list_button_rect)
+            win.blit(restart_button_image, restart_button_rect)
+            if event.type == pygame.MOUSEBUTTONDOWN and a == 0:
+                if start_button_rect.collidepoint(event.pos):
+                    status = 'в игре'
+                    new_level(curent_level)
+                elif list_button_rect.collidepoint(event.pos):
+                    status = 'выбор уровней'
+                elif restart_button_rect.collidepoint(event.pos):
+                    curent_level = 1
+                    status = 'в игре'
+            a = 0
+
+
+
+        if status == 'в игре':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     game_start = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button_rect.collidepoint(event.pos):
+                    status = 'пауза'
+
+        if status == 'пауза':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    print(f'level - {curent_level}')
+                    game_over = False
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+                    new_level(curent_level)
+                    pygame.mixer.music.play(-1)
+                    status = 'в игре'
+                if start_button_rect.collidepoint(event.pos):
+                    game_over = False
+                    print(1)
+                    status = 'в игре'
+                if list_button_rect.collidepoint(event.pos):
+                    status = 'выбор уровней'
 
         if game_over:
             font = pygame.font.Font(None, 36)
             end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
             win.blit(end_text, (400, 450))
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                game_over = False
-                pig_rect.rect.x = square_x
-                pig_rect.rect.y = square_y
-                square_y = HEIGHT - square_size
-                square_x = 35
-                falling_speed = 0
-                is_jumping = False
-                jump_count = 10
-                score = 0
-                new_level(curent_level)
-                win_sound.stop()
-                pygame.mixer.music.play(-1)
+            status = 'окно перехода на следующий уровень'
+            selebrate((0, 0))
+            selebrate((100, 0))
+            selebrate((200, 0))
+            selebrate((400, 0))
+            selebrate((600, 0))
+            selebrate((800, 0))
+            selebrate((300, 0))
+            selebrate((500, 0))
+            selebrate((700, 0))
+            selebrate((900, 0))
+            game_over = False
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and curent_level != 5:
-                curent_level += 1
-                falling_speed = 0
-                is_jumping = False
-                jump_count = 10
-                score = 0
-                new_level(curent_level)
-                pig_rect.rect.x = square_x
-                pig_rect.rect.y = square_y
-                square_y = HEIGHT - square_size
-                square_x = 35
-                game_over = False
-                win_sound.stop()
-                pygame.mixer.music.play(-1)
+
+        if status == 'окно перехода на следующий уровень':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    print(f'level - {curent_level}')
+                    game_over = False
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+                    new_level(curent_level)
+                    pygame.mixer.music.play(-1)
+                    status = 'в игре'
+                if start_button_rect.collidepoint(event.pos):
+                    print(f'level - {curent_level}')
+                    curent_level += 1
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+                    new_level(curent_level)
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    game_over = False
+                    pygame.mixer.music.play(-1)
+                    status = 'в игре'
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and curent_level != 1:
+                print(f'level - {curent_level}')
                 curent_level -= 1
                 falling_speed = 0
                 is_jumping = False
@@ -377,10 +545,9 @@ while running:
                 square_y = HEIGHT - square_size
                 square_x = 35
                 game_over = False
-                win_sound.stop()
                 pygame.mixer.music.play(-1)
 
-    if not game_start and not game_over:
+    if not game_start and not game_over and status == 'в игре':
         # Управление персонажем
         keys = pygame.key.get_pressed()
         move_left = keys[pygame.K_LEFT]
@@ -400,11 +567,6 @@ while running:
         stars = pygame.sprite.spritecollide(pig_rect, portal_sprites, False)
 
         if stars:
-            create_stars((0, 0))
-            create_stars((300, 0))
-            create_stars((500, 0))
-            create_stars((700, 0))
-            create_stars((900, 0))
             game_over = True
             pygame.mixer.music.pause()
             win_sound.set_volume(vol)
@@ -444,26 +606,54 @@ while running:
             # Отображение персонажа
             pygame.draw.rect(win, (255, 0, 0), (square_x - camera_x, square_y, square_size, square_size))
 
-    win.fill((0, 0, 0))  # Отчистка экрана
+    win.fill((0, 0, 0))
     win.blit(background_img, (0, 0))
-    platform_sprites.draw(win)
-    food_sprites.draw(win)
-    font = pygame.font.Font(None, 36)
+    if status == 'главное меню':
+        win.blit(welcome_text, welcome_text_rect)
+        win.blit(start_button_image, start_button_rect)
+        win.blit(list_button_image, list_button_rect)
+        win.blit(restart_button_image, restart_button_rect)
+    if status == 'окно перехода на следующий уровень':
+        win.blit(start_button_image, start_button_rect)
+        win.blit(list_button_image, list_button_rect)
+        win.blit(restart_button_image, restart_button_rect)
+        font = pygame.font.Font(None, 100)
+        text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!", True, (255, 255, 255))
+        win.blit(text, (40, 170))
+        for star in star_sprites:
+            star.update()
+            win.blit(star.image, camera.apply(star))
+    if status == 'выбор уровней':
+        for i in button_group:
+            win.blit(i[0], i[1])
+    if status == 'в игре':
+        # Отчистка экрана
+        win.blit(pause_button_image, pause_button_rect)
+        platform_sprites.draw(win)
+        food_sprites.draw(win)
+        font = pygame.font.Font(None, 36)
 
-    # Создание текстового объекта для отображения счета
-    text = font.render("Счет: " + str(score), True, (255, 255, 255))
+        # Создание текстового объекта для отображения счета
+        text = font.render("Счет: " + str(score), True, (255, 255, 255))
 
-    # Отображение текстового объекта в правом верхнем углу
-    win.blit(text, (WIDTH - text.get_width() - 10, 10))
-    portal_sprites.draw(win)
-    win.blit(pig_img, (pig_rect.rect.x, pig_rect.rect.y))
+        # Отображение текстового объекта в правом верхнем углу
+        win.blit(text, (WIDTH - text.get_width() - 10, 10))
+        portal_sprites.draw(win)
+        win.blit(pig_img, (pig_rect.rect.x, pig_rect.rect.y))
 
-    for star in star_sprites:
-        star.update()  # Обновляем позицию звезды
-        win.blit(star.image, camera.apply(star))
 
-    pygame.display.update()  # Обновляем дисплей
+        for star in star_sprites:
+            star.update()
+            win.blit(star.image, camera.apply(star))
+
+    if status == 'пауза':
+        win.blit(start_button_image, start_button_rect)
+        win.blit(list_button_image, list_button_rect)
+        win.blit(restart_button_image, restart_button_rect)
+
+    pygame.display.update()
     clock.tick(30)
+    print(game_over)
 
 # Отрисовываем экран
 pygame.quit()
