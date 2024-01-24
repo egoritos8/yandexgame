@@ -114,6 +114,7 @@ is_jumping = False
 falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
+carrot_counter = 0
 
 pig_img = pygame.image.load('images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
@@ -140,7 +141,9 @@ class Food(pygame.sprite.Sprite):
 
     def eat(self):
         global score
+        global carrot_counter
         score += 1
+        carrot_counter += 1
         carrot_sound.play()
         food_sprites.remove(self)
 
@@ -437,6 +440,7 @@ while running:
                     curent_level = 1
                     win_sound.stop()
                     status = 'in_game'
+                    new_level(curent_level)
             a = 0
 
         if status == 'in_game':
@@ -494,6 +498,38 @@ while running:
             game_over = False
 
         if status == 'game_window':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    win_sound.stop()
+                    print(f'level - {curent_level}')
+                    game_over = False
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    carrot_counter = 0
+                    score = 0
+                    curent_level = 1
+                    new_level(curent_level)
+                    pygame.mixer.music.play(-1)
+                    status = 'in_game'
+                if list_button_rect.collidepoint(event.pos):
+                    win_sound.stop()
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+                    new_level(curent_level)
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    game_over = False
+                    pygame.mixer.music.play(-1)
+                    status = 'main_menu'
             game_over = False
             pig_rect.rect.x = square_x
             pig_rect.rect.y = square_y
@@ -648,6 +684,14 @@ while running:
         font = pygame.font.Font(None, 100)
         text = font.render("ВЫ ПРОШЛИ ИГРУ!", True, (255, 255, 255))
         win.blit(text, (100, 170))
+        font = pygame.font.Font(None, 50)
+        if carrot_counter == 1:
+            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВКУ", True, (255, 255, 255))
+        elif carrot_counter == [2, 3, 4]:
+            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОКИ", True, (255, 255, 255))
+        else:
+            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОК", True, (255, 255, 255))
+        win.blit(text, (40, 600))
     if status == 'in_game':
         # Отчистка экрана
         win.blit(pause_button_image, pause_button_rect)
