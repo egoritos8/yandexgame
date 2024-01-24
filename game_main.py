@@ -486,7 +486,10 @@ while running:
             font = pygame.font.Font(None, 36)
             end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
             win.blit(end_text, (400, 450))
-            status = 'окно перехода на следующий уровень'
+            if curent_level == 5:
+                status = 'окно прохождения игры'
+            else:
+                status = 'окно перехода на следующий уровень'
             selebrate((0, 0))
             selebrate((100, 0))
             selebrate((200, 0))
@@ -498,6 +501,17 @@ while running:
             selebrate((700, 0))
             selebrate((900, 0))
             game_over = False
+
+        if status == 'окно прохождения игры':
+            game_over = False
+            pig_rect.rect.x = square_x
+            pig_rect.rect.y = square_y
+            square_y = HEIGHT - square_size
+            square_x = 35
+            falling_speed = 0
+            is_jumping = False
+            jump_count = 10
+            score = 0
 
 
         if status == 'окно перехода на следующий уровень':
@@ -531,6 +545,18 @@ while running:
                     game_over = False
                     pygame.mixer.music.play(-1)
                     status = 'в игре'
+                if list_button_rect.collidepoint(event.pos):
+                    falling_speed = 0
+                    is_jumping = False
+                    jump_count = 10
+                    score = 0
+                    new_level(curent_level)
+                    pig_rect.rect.x = square_x
+                    pig_rect.rect.y = square_y
+                    square_y = HEIGHT - square_size
+                    square_x = 35
+                    game_over = False
+                    status = 'главное меню'
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT and curent_level != 1:
                 print(f'level - {curent_level}')
@@ -626,6 +652,15 @@ while running:
     if status == 'выбор уровней':
         for i in button_group:
             win.blit(i[0], i[1])
+            font = pygame.font.Font(None, 100)
+            text = font.render("ВЫБЕРИТЕ УРОВЕНЬ", True, (255, 255, 255))
+            win.blit(text, (100, 130))
+    if status == 'окно прохождения игры':
+        win.blit(list_button_image, list_button_rect)
+        win.blit(restart_button_image, restart_button_rect)
+        font = pygame.font.Font(None, 100)
+        text = font.render("ВЫ ПРОШЛИ ИГРУ!", True, (255, 255, 255))
+        win.blit(text, (100, 170))
     if status == 'в игре':
         # Отчистка экрана
         win.blit(pause_button_image, pause_button_rect)
@@ -653,8 +688,8 @@ while running:
 
     pygame.display.update()
     clock.tick(30)
-    print(game_over)
 
 # Отрисовываем экран
 pygame.quit()
 sys.exit()
+
