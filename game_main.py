@@ -388,6 +388,7 @@ clock = pygame.time.Clock()
 print(f'level - {curent_level}')
 
 while running:
+    portal_sprites.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

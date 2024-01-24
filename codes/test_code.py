@@ -3,7 +3,9 @@ import sys
 import os
 import random
 
+# Убираем задержку при воспроизведении звуков
 pygame.mixer.pre_init(44100, -16, 1, 512)
+
 # Инициализация Pygame
 pygame.init()
 
@@ -13,8 +15,10 @@ score = 0
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BEKOSHA RUN")
 
+# Устанавливаем громкость музыки
 vol = 0.3
 
+# Загружаем музыку
 pygame.mixer.music.load('../sounds/main_soundtrek.mp3')
 pygame.mixer.music.set_volume(vol)
 pygame.mixer.music.play(-1)
@@ -27,6 +31,7 @@ background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
 curent_level = 0
 
+# Загружаем картинки
 welcome_font = pygame.font.Font(None, 200)
 welcome_text = welcome_font.render("BEKOSHA RUN", True, (0, 0, 0))
 welcome_text_rect = welcome_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 700))
@@ -65,6 +70,7 @@ for i in range(3):
     button_group.append((a, b))
 
 
+# Функция по подгрузке файлов
 def load_image(name, colorkey=None):
     fullname = os.path.join(name)
     # Если файл не существует, то выходим
@@ -120,6 +126,7 @@ star_sprites = pygame.sprite.Group()
 portal_sprites = pygame.sprite.Group()
 
 
+# Класс еды (моркови)
 class Food(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -141,59 +148,33 @@ class Food(pygame.sprite.Sprite):
         food_sprites.remove(self)
 
 
+# Класс портала
 class Portal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load('../images/portal.png')
-        self.image = pygame.transform.scale(self.image, (70, 100))
-        self.food_mack = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect(topleft=(x, y))
+        original_image = pygame.image.load('../images/portal2.png')
+        self.image = pygame.transform.scale(original_image, (100, 100))
+        self.rect = self.image.get_rect(center=(x, y))
         self.x = x
         self.y = y
-        portal_sprites.add(self)
+        self.angle = 0  # Угол вращения портала
+        self.original_image = self.image  # Сохраняем оригинальное изображение портала
+
+    def update(self):
+        # Обновляем угол вращения портала
+        self.angle = (self.angle + 5) % 360  # Увеличиваем угол на 5 градусов в каждом кадре
+
+        # Создаем повернутое изображение портала
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
+
+        # Получаем новый прямоугольник с учетом поворота
+        self.rect = self.image.get_rect(center=self.rect.center)
 
     def remove(self):
         portal_sprites.remove(self)
 
 
-class win_effect(pygame.sprite.Sprite):
-    # Генерируем частицы разного размера
-    fire = [load_image("images/trophy.png")]
-    for scale in (5, 10):
-        fire.append(pygame.transform.scale(fire[0], (50, 50)))
-    fire = fire[1:]
-
-    def __init__(self, pos, dx, dy):
-        super().__init__()
-        self.image = random.choice(self.fire)
-        self.rect = self.image.get_rect()
-
-        # У каждой частицы своя скорость — это вектор
-        self.velocity = [dx, dy]
-        # И свои координаты
-        self.rect.x, self.rect.y = pos
-
-        # Гравитация будет одинаковой (значение константы)
-        self.gravity = 1
-
-    def update(self):
-        # Движение с ускорением под действием гравитации
-        self.velocity[1] += self.gravity
-        # Перемещаем частицу
-        self.rect.x += self.velocity[0]
-        self.rect.y += self.velocity[1]
-
-
-def selebrate(position):
-    # Количество создаваемых частиц
-    particle_count = 20
-    # Возможные скорости
-    numbers = range(-5, 6)
-    for _ in range(particle_count):
-        star_effects = win_effect(position, random.choice(numbers), random.choice(numbers))
-        star_sprites.add(star_effects)
-
-
+# Класс эфекта звёзд
 class stars_effect(pygame.sprite.Sprite):
     # Генерируем частицы разного размера
     fire = [load_image("images/star.png")]
@@ -222,6 +203,7 @@ class stars_effect(pygame.sprite.Sprite):
         self.rect.y += self.velocity[1]
 
 
+# Функция по созданию звёзд
 def create_stars(position):
     # Количество создаваемых частиц
     particle_count = 20
@@ -232,6 +214,7 @@ def create_stars(position):
         star_sprites.add(star_effects)
 
 
+# Класс платформ
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, img_path):
         super().__init__()
@@ -243,6 +226,7 @@ class Platform(pygame.sprite.Sprite):
         platform_sprites.remove(self)
 
 
+# Класс камеры (для звёзд)
 class Camera:
     def __init__(self, width, height):
         self.camera = pygame.Rect(0, 0, width, height)
@@ -267,6 +251,7 @@ class Camera:
 camera = Camera(WIDTH // 2, HEIGHT // 2)
 
 
+# Класс игрока (свинки)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -343,6 +328,7 @@ pig_rect = Player()
 platform_sprites = pygame.sprite.Group()
 
 
+# Функция по отрисовке нового уровня
 def new_level(x):
     platform_sprites.empty()
     food_sprites.empty()
@@ -402,6 +388,7 @@ clock = pygame.time.Clock()
 print(f'level - {curent_level}')
 
 while running:
+    portal_sprites.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -490,8 +477,8 @@ while running:
             end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
             win.blit(end_text, (400, 450))
             if curent_level == 5:
+                win_sound.play()
                 status = 'game_window'
-                win_sound.stop()
             else:
                 status = 'next_level_window'
             create_stars((0, 0))
@@ -507,7 +494,6 @@ while running:
             game_over = False
 
         if status == 'game_window':
-            win_sound.stop()
             game_over = False
             pig_rect.rect.x = square_x
             pig_rect.rect.y = square_y
@@ -580,6 +566,13 @@ while running:
 
         pig_rect.update(move_left, move_right, jump)
 
+        win.blit(background_img, (0, 0))
+
+        # Обновление и отрисовка порталов
+        portal_sprites.update()  # Обновляем порталы
+        for portal in portal_sprites:
+            win.blit(portal.image, portal.rect)
+
         # Обработка столкновения с платформами
         collide = pygame.sprite.spritecollide(pig_rect, platform_sprites, False)
         eating = pygame.sprite.spritecollide(pig_rect, food_sprites, False)
@@ -589,7 +582,8 @@ while running:
             game_over = True
             pygame.mixer.music.pause()
             win_sound.set_volume(vol)
-            win_sound.play()
+            if curent_level != 5:
+                win_sound.play()
 
         if eating:
             eating[0].eat()
