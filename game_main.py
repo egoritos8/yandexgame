@@ -490,8 +490,8 @@ while running:
             end_text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!!", True, (255, 255, 255))
             win.blit(end_text, (400, 450))
             if curent_level == 5:
+                win_sound.play()
                 status = 'game_window'
-                win_sound.stop()
             else:
                 status = 'next_level_window'
             create_stars((0, 0))
@@ -507,7 +507,6 @@ while running:
             game_over = False
 
         if status == 'game_window':
-            win_sound.stop()
             game_over = False
             pig_rect.rect.x = square_x
             pig_rect.rect.y = square_y
@@ -589,7 +588,8 @@ while running:
             game_over = True
             pygame.mixer.music.pause()
             win_sound.set_volume(vol)
-            win_sound.play()
+            if curent_level != 5:
+                win_sound.play()
 
         if eating:
             eating[0].eat()
