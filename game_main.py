@@ -129,11 +129,12 @@ portal_sprites = pygame.sprite.Group()
 
 # Класс еды (моркови)
 class Food(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, l):
         super().__init__()
         self.x = x  # Добавляем атрибут x
         self.y = y
-        self.image = pygame.image.load('images/carrot.png')
+        self.letter = l
+        self.image = pygame.image.load(f'images/{self.letter.lower()}.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.food_mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -149,7 +150,7 @@ class Food(pygame.sprite.Sprite):
         elif self.rect.y >= self.original_y + 10:  # Если морковка опустилась на 10 пикселей вниз от изначальной позиции
             self.direction = -1  # Поменять направление движения на подъем
 
-    def eat(self):
+    def eat(self, x):
         global score
         global carrot_counter
         score += 1
@@ -351,7 +352,7 @@ def new_level(x):
     lines = f.readlines()
 
     for line in lines:
-        if line.split('-')[0] == 'P':
+        if line.split('-')[0] == 'PLAT':
             obstacle_x = int(line.split('-')[1])
             obstacle_y = int(line.split('-')[2])
             obstacle_width = int(line.split('-')[3])
@@ -359,11 +360,123 @@ def new_level(x):
             ship_img = 'images/platform.png'
             platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
             platform_sprites.add(platform)
-        if line.split('-')[0] == 'F':
+
+        if line.split('-')[0] == 'A':
             obstacle_x = int(line.split('-')[1])
             obstacle_y = int(line.split('-')[2])
-            food = Food(obstacle_x, obstacle_y)
+            food = Food(obstacle_x, obstacle_y, 'A')
             food_sprites.add(food)
+        if line.split('-')[0] == 'B':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'B')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'C':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'C')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'D':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'D')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'H':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'H')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'I':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'I')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'G':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'G')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'K':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'K')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'L':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'L')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'M':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'M')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'N':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'N')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'O':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'O')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'P':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'P')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'Q':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'Q')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'R':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'R')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'S':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'S')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'T':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'T')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'U':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'U')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'V':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'V')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'W':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'W')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'X':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'X')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'Y':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'Y')
+            food_sprites.add(food)
+        if line.split('-')[0] == 'Z':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'Z')
+            food_sprites.add(food)
+
         if line.split('-')[0] == 'PORT':
             obstacle_x = int(line.split('-')[1])
             obstacle_y = int(line.split('-')[2])
@@ -697,11 +810,11 @@ while running:
         win.blit(text, (100, 170))
         font = pygame.font.Font(None, 50)
         if carrot_counter == 1:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВКУ", True, (255, 255, 255))
+            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} БУКВУ", True, (255, 255, 255))
         elif carrot_counter == 2 or carrot_counter == 3 or carrot_counter == 4:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОКИ", True, (255, 255, 255))
+            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} БУКВЫ", True, (255, 255, 255))
         else:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОК", True, (255, 255, 255))
+            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} БУКВ", True, (255, 255, 255))
         win.blit(text, (40, 600))
     if status == 'in_game':
         # Отчистка экрана
