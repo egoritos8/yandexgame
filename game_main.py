@@ -23,8 +23,34 @@ pygame.mixer.music.load('sounds/main_soundtrek.mp3')
 pygame.mixer.music.set_volume(vol)
 pygame.mixer.music.play(-1)
 
-carrot_sound = pygame.mixer.Sound('sounds/carrot_sound.ogg')
-win_sound = pygame.mixer.Sound("sounds/win_sound.ogg")
+a_sound = pygame.mixer.Sound('sounds/letter-a.ogg')
+b_sound = pygame.mixer.Sound('sounds/letter-b.ogg')
+c_sound = pygame.mixer.Sound('sounds/letter-c.ogg')
+d_sound = pygame.mixer.Sound('sounds/letter-d.ogg')
+e_sound = pygame.mixer.Sound('sounds/letter-e.ogg')
+f_sound = pygame.mixer.Sound('sounds/letter-f.ogg')
+g_sound = pygame.mixer.Sound('sounds/letter-g.ogg')
+h_sound = pygame.mixer.Sound('sounds/letter-h.ogg')
+i_sound = pygame.mixer.Sound('sounds/letter-i.ogg')
+j_sound = pygame.mixer.Sound('sounds/letter-j.ogg')
+k_sound = pygame.mixer.Sound('sounds/letter-k.ogg')
+l_sound = pygame.mixer.Sound('sounds/letter-l.ogg')
+m_sound = pygame.mixer.Sound('sounds/letter-m.ogg')
+n_sound = pygame.mixer.Sound('sounds/letter-n.ogg')
+o_sound = pygame.mixer.Sound('sounds/letter-o.ogg')
+p_sound = pygame.mixer.Sound('sounds/letter-p.ogg')
+q_sound = pygame.mixer.Sound('sounds/letter-q.ogg')
+r_sound = pygame.mixer.Sound('sounds/letter-r.ogg')
+s_sound = pygame.mixer.Sound('sounds/letter-s.ogg')
+t_sound = pygame.mixer.Sound('sounds/letter-t.ogg')
+u_sound = pygame.mixer.Sound('sounds/letter-u.ogg')
+v_sound = pygame.mixer.Sound('sounds/letter-v.ogg')
+w_sound = pygame.mixer.Sound('sounds/letter-w.ogg')
+x_sound = pygame.mixer.Sound('sounds/letter-x.ogg')
+y_sound = pygame.mixer.Sound('sounds/letter-y.ogg')
+z_sound = pygame.mixer.Sound('sounds/letter-z.ogg')
+
+win_sound = pygame.mixer.Sound("sounds/win_sound1.ogg")
 
 background_img = pygame.image.load('images/background2.png')
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
@@ -114,7 +140,7 @@ is_jumping = False
 falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
-carrot_counter = 0
+letter_counter = 0
 
 pig_img = pygame.image.load('images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
@@ -122,25 +148,104 @@ reverse = 'L'
 pig_mack = pygame.mask.from_surface(pig_img)
 
 platform_sprites = pygame.sprite.Group()
-food_sprites = pygame.sprite.Group()
+
+a_sprites = pygame.sprite.Group()
+b_sprites = pygame.sprite.Group()
+c_sprites = pygame.sprite.Group()
+d_sprites = pygame.sprite.Group()
+e_sprites = pygame.sprite.Group()
+f_sprites = pygame.sprite.Group()
+g_sprites = pygame.sprite.Group()
+h_sprites = pygame.sprite.Group()
+i_sprites = pygame.sprite.Group()
+j_sprites = pygame.sprite.Group()
+k_sprites = pygame.sprite.Group()
+l_sprites = pygame.sprite.Group()
+m_sprites = pygame.sprite.Group()
+n_sprites = pygame.sprite.Group()
+o_sprites = pygame.sprite.Group()
+p_sprites = pygame.sprite.Group()
+q_sprites = pygame.sprite.Group()
+r_sprites = pygame.sprite.Group()
+s_sprites = pygame.sprite.Group()
+t_sprites = pygame.sprite.Group()
+u_sprites = pygame.sprite.Group()
+v_sprites = pygame.sprite.Group()
+w_sprites = pygame.sprite.Group()
+x_sprites = pygame.sprite.Group()
+y_sprites = pygame.sprite.Group()
+z_sprites = pygame.sprite.Group()
+
 star_sprites = pygame.sprite.Group()
 portal_sprites = pygame.sprite.Group()
 
 
 # Класс еды (моркови)
 class Food(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, l):
         super().__init__()
         self.x = x  # Добавляем атрибут x
         self.y = y
-        self.image = pygame.image.load('images/carrot.png')
+        self.letter = l
+        self.image = pygame.image.load(f'images/{self.letter.lower()}.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.food_mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=(x, y))
         self.original_y = y  # Сохраняем изначальную позицию по вертикали
         self.direction = 1  # Направление движения морковки
         self.speed = 1  # Устанавливаем скорость морковки
-        food_sprites.add(self)
+        if self.letter == 'A':
+            a_sprites.add(self)
+        if self.letter == 'B':
+            b_sprites.add(self)
+        if self.letter == 'C':
+            c_sprites.add(self)
+        if self.letter == 'D':
+            d_sprites.add(self)
+        if self.letter == 'E':
+            e_sprites.add(self)
+        if self.letter == 'F':
+            f_sprites.add(self)
+        if self.letter == 'G':
+            g_sprites.add(self)
+        if self.letter == 'H':
+            h_sprites.add(self)
+        if self.letter == 'I':
+            i_sprites.add(self)
+        if self.letter == 'J':
+            j_sprites.add(self)
+        if self.letter == 'K':
+            k_sprites.add(self)
+        if self.letter == 'L':
+            l_sprites.add(self)
+        if self.letter == 'M':
+            m_sprites.add(self)
+        if self.letter == 'N':
+            n_sprites.add(self)
+        if self.letter == 'O':
+            o_sprites.add(self)
+        if self.letter == 'P':
+            p_sprites.add(self)
+        if self.letter == 'Q':
+            q_sprites.add(self)
+        if self.letter == 'R':
+            r_sprites.add(self)
+        if self.letter == 'S':
+            s_sprites.add(self)
+        if self.letter == 'T':
+            t_sprites.add(self)
+        if self.letter == 'U':
+            u_sprites.add(self)
+        if self.letter == 'V':
+            v_sprites.add(self)
+        if self.letter == 'W':
+            w_sprites.add(self)
+        if self.letter == 'X':
+            x_sprites.add(self)
+        if self.letter == 'Y':
+            y_sprites.add(self)
+        if self.letter == 'Z':
+            z_sprites.add(self)
 
     def update(self):
         self.rect.y += self.speed * self.direction  # Поднимаем или опускаем морковку
@@ -149,16 +254,91 @@ class Food(pygame.sprite.Sprite):
         elif self.rect.y >= self.original_y + 10:  # Если морковка опустилась на 10 пикселей вниз от изначальной позиции
             self.direction = -1  # Поменять направление движения на подъем
 
-    def eat(self):
+    def eat(self, x):
         global score
-        global carrot_counter
+        global letter_counter
         score += 1
-        carrot_counter += 1
-        carrot_sound.play()
-        food_sprites.remove(self)
+        letter_counter += 1
 
-    def remove(self):
-        food_sprites.remove(self)
+        if x == 'a':
+            a_sound.play()
+        if x == 'b':
+            b_sound.play()
+        if x == 'c':
+            c_sound.play()
+        if x == 'd':
+            d_sound.play()
+        if x == 'e':
+            e_sound.play()
+        if x == 'f':
+            f_sound.play()
+        if x == 'g':
+            g_sound.play()
+        if x == 'h':
+            h_sound.play()
+        if x == 'i':
+            i_sound.play()
+        if x == 'j':
+            j_sound.play()
+        if x == 'k':
+            k_sound.play()
+        if x == 'l':
+            l_sound.play()
+        if x == 'm':
+            m_sound.play()
+        if x == 'n':
+            n_sound.play()
+        if x == 'o':
+            o_sound.play()
+        if x == 'p':
+            p_sound.play()
+        if x == 'q':
+            q_sound.play()
+        if x == 'r':
+            r_sound.play()
+        if x == 's':
+            s_sound.play()
+        if x == 't':
+            t_sound.play()
+        if x == 'u':
+            u_sound.play()
+        if x == 'v':
+            v_sound.play()
+        if x == 'w':
+            w_sound.play()
+        if x == 'x':
+            x_sound.play()
+        if x == 'y':
+            y_sound.play()
+        if x == 'z':
+            z_sound.play()
+
+        a_sprites.remove(self)
+        b_sprites.remove(self)
+        c_sprites.remove(self)
+        d_sprites.remove(self)
+        e_sprites.remove(self)
+        f_sprites.remove(self)
+        g_sprites.remove(self)
+        h_sprites.remove(self)
+        i_sprites.remove(self)
+        j_sprites.remove(self)
+        k_sprites.remove(self)
+        l_sprites.remove(self)
+        m_sprites.remove(self)
+        n_sprites.remove(self)
+        o_sprites.remove(self)
+        p_sprites.remove(self)
+        q_sprites.remove(self)
+        r_sprites.remove(self)
+        s_sprites.remove(self)
+        t_sprites.remove(self)
+        u_sprites.remove(self)
+        v_sprites.remove(self)
+        w_sprites.remove(self)
+        x_sprites.remove(self)
+        y_sprites.remove(self)
+        z_sprites.remove(self)
 
 
 # Класс портала
@@ -344,14 +524,39 @@ platform_sprites = pygame.sprite.Group()
 # Функция по отрисовке нового уровня
 def new_level(x):
     platform_sprites.empty()
-    food_sprites.empty()
+    a_sprites.empty()
+    b_sprites.empty()
+    c_sprites.empty()
+    d_sprites.empty()
+    e_sprites.empty()
+    f_sprites.empty()
+    g_sprites.empty()
+    h_sprites.empty()
+    i_sprites.empty()
+    j_sprites.empty()
+    k_sprites.empty()
+    l_sprites.empty()
+    m_sprites.empty()
+    n_sprites.empty()
+    o_sprites.empty()
+    p_sprites.empty()
+    q_sprites.empty()
+    r_sprites.empty()
+    s_sprites.empty()
+    t_sprites.empty()
+    u_sprites.empty()
+    v_sprites.empty()
+    w_sprites.empty()
+    x_sprites.empty()
+    y_sprites.empty()
+    z_sprites.empty()
     portal_sprites.empty()
 
     f = open(level[x], encoding='utf-8')
     lines = f.readlines()
 
     for line in lines:
-        if line.split('-')[0] == 'P':
+        if line.split('-')[0] == 'PLAT':
             obstacle_x = int(line.split('-')[1])
             obstacle_y = int(line.split('-')[2])
             obstacle_width = int(line.split('-')[3])
@@ -359,11 +564,138 @@ def new_level(x):
             ship_img = 'images/platform.png'
             platform = Platform(obstacle_x, obstacle_y, obstacle_width, obstacle_height, ship_img)
             platform_sprites.add(platform)
+
+        if line.split('-')[0] == 'A':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'A')
+            a_sprites.add(food)
+        if line.split('-')[0] == 'B':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'B')
+            b_sprites.add(food)
+        if line.split('-')[0] == 'C':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'C')
+            c_sprites.add(food)
+        if line.split('-')[0] == 'D':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'D')
+            d_sprites.add(food)
+        if line.split('-')[0] == 'E':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'E')
+            e_sprites.add(food)
         if line.split('-')[0] == 'F':
             obstacle_x = int(line.split('-')[1])
             obstacle_y = int(line.split('-')[2])
-            food = Food(obstacle_x, obstacle_y)
-            food_sprites.add(food)
+            food = Food(obstacle_x, obstacle_y, 'F')
+            f_sprites.add(food)
+        if line.split('-')[0] == 'G':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'G')
+            g_sprites.add(food)
+        if line.split('-')[0] == 'H':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'H')
+            h_sprites.add(food)
+        if line.split('-')[0] == 'I':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'I')
+            i_sprites.add(food)
+        if line.split('-')[0] == 'J':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'J')
+            j_sprites.add(food)
+        if line.split('-')[0] == 'K':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'K')
+            k_sprites.add(food)
+        if line.split('-')[0] == 'L':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'L')
+            l_sprites.add(food)
+        if line.split('-')[0] == 'M':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'M')
+            m_sprites.add(food)
+        if line.split('-')[0] == 'N':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'N')
+            n_sprites.add(food)
+        if line.split('-')[0] == 'O':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'O')
+            o_sprites.add(food)
+        if line.split('-')[0] == 'P':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'P')
+            p_sprites.add(food)
+        if line.split('-')[0] == 'Q':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'Q')
+            q_sprites.add(food)
+        if line.split('-')[0] == 'R':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'R')
+            r_sprites.add(food)
+        if line.split('-')[0] == 'S':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'S')
+            s_sprites.add(food)
+        if line.split('-')[0] == 'T':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'T')
+            t_sprites.add(food)
+        if line.split('-')[0] == 'U':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'U')
+            u_sprites.add(food)
+        if line.split('-')[0] == 'V':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'V')
+            v_sprites.add(food)
+        if line.split('-')[0] == 'W':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'W')
+            w_sprites.add(food)
+        if line.split('-')[0] == 'X':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'X')
+            x_sprites.add(food)
+        if line.split('-')[0] == 'Y':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'Y')
+            y_sprites.add(food)
+        if line.split('-')[0] == 'Z':
+            obstacle_x = int(line.split('-')[1])
+            obstacle_y = int(line.split('-')[2])
+            food = Food(obstacle_x, obstacle_y, 'Z')
+            z_sprites.add(food)
+
         if line.split('-')[0] == 'PORT':
             obstacle_x = int(line.split('-')[1])
             obstacle_y = int(line.split('-')[2])
@@ -397,12 +729,38 @@ a = 0
 running = True
 status = 'main_menu'
 clock = pygame.time.Clock()
+letter = ''
 
 print(f'level - {curent_level}')
 
 while running:
     portal_sprites.update()
-    food_sprites.update()
+    a_sprites.update()
+    b_sprites.update()
+    c_sprites.update()
+    d_sprites.update()
+    e_sprites.update()
+    f_sprites.update()
+    g_sprites.update()
+    h_sprites.update()
+    i_sprites.update()
+    j_sprites.update()
+    k_sprites.update()
+    l_sprites.update()
+    m_sprites.update()
+    n_sprites.update()
+    o_sprites.update()
+    p_sprites.update()
+    q_sprites.update()
+    r_sprites.update()
+    s_sprites.update()
+    t_sprites.update()
+    u_sprites.update()
+    v_sprites.update()
+    w_sprites.update()
+    x_sprites.update()
+    y_sprites.update()
+    z_sprites.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -521,7 +879,7 @@ while running:
                     falling_speed = 0
                     is_jumping = False
                     jump_count = 10
-                    carrot_counter = 0
+                    letter_counter = 0
                     score = 0
                     curent_level = 1
                     new_level(curent_level)
@@ -622,7 +980,86 @@ while running:
 
         # Обработка столкновения с платформами
         collide = pygame.sprite.spritecollide(pig_rect, platform_sprites, False)
-        eating = pygame.sprite.spritecollide(pig_rect, food_sprites, False)
+        if pygame.sprite.spritecollide(pig_rect, a_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, a_sprites, False)
+            letter = 'a'
+        elif pygame.sprite.spritecollide(pig_rect, b_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, b_sprites, False)
+            letter = 'b'
+        elif pygame.sprite.spritecollide(pig_rect, c_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, c_sprites, False)
+            letter = 'c'
+        elif pygame.sprite.spritecollide(pig_rect, d_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, d_sprites, False)
+            letter = 'd'
+        elif pygame.sprite.spritecollide(pig_rect, e_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, e_sprites, False)
+            letter = 'e'
+        elif pygame.sprite.spritecollide(pig_rect, f_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, f_sprites, False)
+            letter = 'f'
+        elif pygame.sprite.spritecollide(pig_rect, g_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, g_sprites, False)
+            letter = 'g'
+        elif pygame.sprite.spritecollide(pig_rect, h_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, h_sprites, False)
+            letter = 'h'
+        elif pygame.sprite.spritecollide(pig_rect, i_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, i_sprites, False)
+            letter = 'i'
+        elif pygame.sprite.spritecollide(pig_rect, j_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, j_sprites, False)
+            letter = 'j'
+        elif pygame.sprite.spritecollide(pig_rect, k_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, k_sprites, False)
+            letter = 'k'
+        elif pygame.sprite.spritecollide(pig_rect, l_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, l_sprites, False)
+            letter = 'l'
+        elif pygame.sprite.spritecollide(pig_rect, m_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, m_sprites, False)
+            letter = 'm'
+        elif pygame.sprite.spritecollide(pig_rect, n_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, n_sprites, False)
+            letter = 'n'
+        elif pygame.sprite.spritecollide(pig_rect, o_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, o_sprites, False)
+            letter = 'o'
+        elif pygame.sprite.spritecollide(pig_rect, p_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, p_sprites, False)
+            letter = 'p'
+        elif pygame.sprite.spritecollide(pig_rect, q_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, q_sprites, False)
+            letter = 'q'
+        elif pygame.sprite.spritecollide(pig_rect, r_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, r_sprites, False)
+            letter = 'r'
+        elif pygame.sprite.spritecollide(pig_rect, s_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, s_sprites, False)
+            letter = 's'
+        elif pygame.sprite.spritecollide(pig_rect, t_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, t_sprites, False)
+            letter = 't'
+        elif pygame.sprite.spritecollide(pig_rect, u_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, u_sprites, False)
+            letter = 'u'
+        elif pygame.sprite.spritecollide(pig_rect, v_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, v_sprites, False)
+            letter = 'v'
+        elif pygame.sprite.spritecollide(pig_rect, w_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, w_sprites, False)
+            letter = 'w'
+        elif pygame.sprite.spritecollide(pig_rect, x_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, x_sprites, False)
+            letter = 'x'
+        elif pygame.sprite.spritecollide(pig_rect, y_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, y_sprites, False)
+            letter = 'y'
+        elif pygame.sprite.spritecollide(pig_rect, z_sprites, False):
+            eating = pygame.sprite.spritecollide(pig_rect, z_sprites, False)
+            letter = 'z'
+        else:
+            eating = False
         stars = pygame.sprite.spritecollide(pig_rect, portal_sprites, False)
 
         if stars:
@@ -633,8 +1070,9 @@ while running:
                 win_sound.play()
 
         if eating:
-            eating[0].eat()
+            eating[0].eat(letter)
             create_stars((eating[0].x, eating[0].y))
+            letter = ''
 
         if collide:
             if pig_rect.rect.bottom <= collide[0].rect.centery:
@@ -678,7 +1116,7 @@ while running:
         win.blit(list_button_image, list_button_rect)
         win.blit(restart_button_image, restart_button_rect)
         font = pygame.font.Font(None, 100)
-        text = font.render("ВЫ ПРОШЛИ УРОВЕНЬ!", True, (255, 255, 255))
+        text = font.render("ТЫ ПРОШЁЛ УРОВЕНЬ!", True, (255, 255, 255))
         win.blit(text, (40, 170))
         for star in star_sprites:
             star.update()
@@ -687,31 +1125,56 @@ while running:
         for i in button_group:
             win.blit(i[0], i[1])
             font = pygame.font.Font(None, 100)
-            text = font.render("ВЫБЕРИТЕ УРОВЕНЬ", True, (255, 255, 255))
+            text = font.render("ВЫБЕРИ УРОВЕНЬ", True, (255, 255, 255))
             win.blit(text, (100, 130))
     if status == 'game_window':
         win.blit(list_button_image, list_button_rect)
         win.blit(restart_button_image, restart_button_rect)
         font = pygame.font.Font(None, 100)
-        text = font.render("ВЫ ПРОШЛИ ИГРУ!", True, (255, 255, 255))
+        text = font.render("ТЫ ПРОШЁЛ ИГРУ!", True, (255, 255, 255))
         win.blit(text, (100, 170))
         font = pygame.font.Font(None, 50)
-        if carrot_counter == 1:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВКУ", True, (255, 255, 255))
-        elif carrot_counter == 2 or carrot_counter == 3 or carrot_counter == 4:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОКИ", True, (255, 255, 255))
+        if letter_counter == 1:
+            text = font.render(f"ТЫ СОБРАЛ {letter_counter} БУКВУ", True, (255, 255, 255))
+        elif letter_counter == 2 or letter_counter == 3 or letter_counter == 4:
+            text = font.render(f"ТЫ СОБРАЛ {letter_counter} БУКВЫ", True, (255, 255, 255))
         else:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОК", True, (255, 255, 255))
+            text = font.render(f"ТЫ СОБРАЛ {letter_counter} БУКВ", True, (255, 255, 255))
         win.blit(text, (40, 600))
     if status == 'in_game':
         # Отчистка экрана
         win.blit(pause_button_image, pause_button_rect)
         platform_sprites.draw(win)
-        food_sprites.draw(win)
+        a_sprites.draw(win)
+        b_sprites.draw(win)
+        c_sprites.draw(win)
+        d_sprites.draw(win)
+        e_sprites.draw(win)
+        f_sprites.draw(win)
+        g_sprites.draw(win)
+        h_sprites.draw(win)
+        i_sprites.draw(win)
+        j_sprites.draw(win)
+        k_sprites.draw(win)
+        l_sprites.draw(win)
+        m_sprites.draw(win)
+        n_sprites.draw(win)
+        o_sprites.draw(win)
+        p_sprites.draw(win)
+        q_sprites.draw(win)
+        r_sprites.draw(win)
+        s_sprites.draw(win)
+        t_sprites.draw(win)
+        u_sprites.draw(win)
+        v_sprites.draw(win)
+        w_sprites.draw(win)
+        x_sprites.draw(win)
+        y_sprites.draw(win)
+        z_sprites.draw(win)
         font = pygame.font.Font(None, 36)
 
         # Создание текстового объекта для отображения счета
-        text = font.render("Счет: " + str(score), True, (255, 255, 255))
+        text = font.render("Твой счет: " + str(score), True, (255, 255, 255))
 
         # Отображение текстового объекта в правом верхнем углу
         win.blit(text, (WIDTH - text.get_width() - 10, 10))

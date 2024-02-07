@@ -114,7 +114,7 @@ is_jumping = False
 falling_speed = 0
 contact = False
 prev_square_y = square_y  # Начальная позиция по вертикали
-carrot_counter = 0
+letter_counter = 0
 
 pig_img = pygame.image.load('../images/pig2.png')
 pig_img = pygame.transform.scale(pig_img, (square_size, square_size))
@@ -151,7 +151,7 @@ class Food(pygame.sprite.Sprite):
 
     def eat(self):
         global score
-        global carrot_counter
+        global letter_counter
         score += 1
         carrot_counter += 1
         carrot_sound.play()
@@ -521,7 +521,7 @@ while running:
                     falling_speed = 0
                     is_jumping = False
                     jump_count = 10
-                    carrot_counter = 0
+                    letter_counter = 0
                     score = 0
                     curent_level = 1
                     new_level(curent_level)
@@ -696,12 +696,12 @@ while running:
         text = font.render("ВЫ ПРОШЛИ ИГРУ!", True, (255, 255, 255))
         win.blit(text, (100, 170))
         font = pygame.font.Font(None, 50)
-        if carrot_counter == 1:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВКУ", True, (255, 255, 255))
-        elif carrot_counter == [2, 3, 4]:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОКИ", True, (255, 255, 255))
+        if letter_counter == 1:
+            text = font.render(f"ВЫ СОБРАЛИ {letter_counter} МОРКОВКУ", True, (255, 255, 255))
+        elif letter_counter == [2, 3, 4]:
+            text = font.render(f"ВЫ СОБРАЛИ {letter_counter} МОРКОВОКИ", True, (255, 255, 255))
         else:
-            text = font.render(f"ВЫ СОБРАЛИ {carrot_counter} МОРКОВОК", True, (255, 255, 255))
+            text = font.render(f"ВЫ СОБРАЛИ {letter_counter} МОРКОВОК", True, (255, 255, 255))
         win.blit(text, (40, 600))
     if status == 'in_game':
         # Отчистка экрана
